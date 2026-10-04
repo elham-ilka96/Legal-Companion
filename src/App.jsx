@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
-import "./auth.css";
+import "./app.css";
+import userRoundKey from "./assets/user-round-key.svg";
 
 const toEnglishDigits = (value) =>
   value.replace(/[۰-۹]/g, (digit) =>
@@ -543,6 +544,9 @@ const handleVerificationSubmit = async () => {
       <section className="auth-card">
           {authScreen === "welcome" && (
             <>
+              <div className="auth-logo">
+  <img src={userRoundKey} alt="ورود امن" />
+</div>           
               <h1 className="auth-title">ورود امن به همراه حقوقی شما</h1>
               <p className="auth-description">
                 برای پیگیری پرونده‌ها و خدمات قضایی وارد حساب خود شوید یا حساب تازه‌ای بسازید.
@@ -727,7 +731,7 @@ const handleVerificationSubmit = async () => {
                 }}
               >
                 <div className="verification-panel">
-                  <label htmlFor="verification-code-1">کد تأیید</label>
+                  
                   <div className="verification-inputs" dir="ltr">
                     {Array.from({ length: 6 }, (_, index) => (
                       <input
@@ -815,7 +819,7 @@ const handleVerificationSubmit = async () => {
               <form className="auth-form" onSubmit={handleIdentityContinue}>
                 <div className="identity-name-grid">
                   <div className="identity-field">
-                    <label htmlFor="identity-last-name">نام خانوادگی <span className="required-star">*</span></label>
+                    <label htmlFor="identity-last-name"><span className="required-star">*</span> نام خانوادگی </label>
                     <input
                       id="identity-last-name"
                       type="text"
@@ -826,7 +830,7 @@ const handleVerificationSubmit = async () => {
                     />
                   </div>
                   <div className="identity-field">
-                    <label htmlFor="identity-first-name">نام <span className="required-star">*</span></label>
+                    <label htmlFor="identity-first-name"> <span className="required-star">*</span>نام </label>
                     <input
                       id="identity-first-name"
                       type="text"
@@ -837,7 +841,7 @@ const handleVerificationSubmit = async () => {
                     />
                   </div>
                 </div>
-                <label htmlFor="identity-national-id">کد ملی <span className="required-star">*</span></label>
+                <label htmlFor="identity-national-id"><span className="required-star">*</span>کد ملی </label>
                 <input
                   id="identity-national-id"
                   type="text"
@@ -863,7 +867,7 @@ const handleVerificationSubmit = async () => {
                     کد ملی ایرانی واردشده معتبر نیست.
                   </div>
                 )}
-                <label>جنسیت <span className="required-star">*</span></label>
+                <label><span className="required-star">*</span>جنسیت </label>
                 <div className="gender-options">
                   <label className={`gender-option ${patient.gender === "male" ? "selected" : ""}`}>
                     <input
@@ -890,7 +894,7 @@ const handleVerificationSubmit = async () => {
                     زن
                   </label>
                 </div>
-                <label htmlFor="identity-birth-year">سال تولد <span className="required-star">*</span></label>
+                <label htmlFor="identity-birth-year"><span className="required-star">*</span>سال تولد </label>
                 <input
                   id="identity-birth-year"
                   type="text"

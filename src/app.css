@@ -151,15 +151,16 @@ button {
   gap: 12px;
   margin: 24px 0;
   padding: 15px;
-  border: 1px solid #e5dce2;
+  border: 0px solid #e5dce2;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.42);
+  background: #edf1f1;
 }
 
 .privacy-notice p {
   margin: 0;
   color: #445163;
   line-height: 1.8;
+  
 }
 
 .privacy-lock {
@@ -453,4 +454,19 @@ button {
   .identity-name-grid {
     gap: 9px;
   }
+}
+.auth-logo {
+  text-align: right;
+  margin-bottom: 15px;
+  
+  
+}
+
+.auth-logo img {
+  width: 70px;
+  height: 70px;
+  background-color: #edf1f1;
+  border: 1px solid #f5f7f8;
+  border-radius: 10px;
+  padding:15px;
 }
