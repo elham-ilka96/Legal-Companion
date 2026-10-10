@@ -27,3 +27,26 @@ dist-ssr
 *.db-shm
 *.db-wal
 server/uploads/
+# Python
+__pycache__/
+
+# Python cache and virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Django local files
+db.sqlite3
+.env
+.env.*
+!.env.example
+
+# Python test and coverage files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Uploaded and generated files
+media/

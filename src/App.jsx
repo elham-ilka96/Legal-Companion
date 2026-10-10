@@ -202,7 +202,7 @@ const handleMobileSubmit = async (e) => {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/send-code",
+      "http://127.0.0.1:8000/api/send-code/",
       {
         method: "POST",
         headers: {
@@ -251,7 +251,7 @@ const handleMobileSubmit = async (e) => {
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/send-code", {
+      const response = await fetch("http://127.0.0.1:8000/api/send-code/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile, mode: authMode }),
@@ -327,7 +327,7 @@ const handleVerificationSubmit = async () => {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/verify-code",
+      "http://127.0.0.1:8000/api/verify-code/",
       {
         method: "POST",
         headers: {
@@ -367,7 +367,7 @@ const handleVerificationSubmit = async () => {
     // ==========================
 
     const patientResponse = await fetch(
-      `http://localhost:5000/api/patients/${mobile}`,
+      `http://127.0.0.1:8000/api/patients/${mobile}`,
       { headers: { Authorization: `Bearer ${data.token}` } }
     );
 
@@ -423,7 +423,7 @@ const handleVerificationSubmit = async () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://127.0.0.1:8000/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile, password }),
@@ -511,7 +511,7 @@ const handleVerificationSubmit = async () => {
     if (authMode === "signup") formData.append("password", password);
 
     try {
-      const response = await fetch("http://localhost:5000/api/patients", {
+      const response = await fetch("http://127.0.0.1:8000/api/patients/", {
         method: "POST",
         headers: { Authorization: `Bearer ${authToken}` },
         body: formData,
