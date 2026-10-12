@@ -131,3 +131,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+# Paperless-ngx Integration
+PAPERLESS_URL = os.environ.get(
+    "PAPERLESS_URL",
+    "http://127.0.0.1:8000"
+)
+
+PAPERLESS_URL = "http://127.0.0.1:8000"
+PAPERLESS_API_TOKEN = "57380de0dd3067f182fef4a68994167199a2ca65"

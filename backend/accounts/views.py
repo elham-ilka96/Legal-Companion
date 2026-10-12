@@ -1,5 +1,6 @@
 import hashlib
 import secrets
+import os
 from datetime import timedelta
 
 from django.contrib.auth.hashers import check_password, make_password
@@ -19,6 +20,9 @@ from .models import (
 )
 from .serializers import UserProfileSerializer, LegalCaseSerializer
 
+
+from django.core.files.storage import default_storage
+from .paperless_service import upload_document, get_task_status, search_documents
 
 # =========================================================
 # توابع کمکی
@@ -607,9 +611,9 @@ def save_patient(request):
         )
 
     user.save()
-
+ 
     return Response(
-        {
+       {
             "message": "اطلاعات با موفقیت ذخیره شد.",
             "patient": {
                 "id": user.id,
@@ -625,4 +629,138 @@ def save_patient(request):
             }
         },
         status=status.HTTP_200_OK
+    )
+
+
+
+@api_view(["POST"])
+def upload_to_paperless(request):
+    """
+    آپلود سند از فرانت‌اند به Paperless از طریق بک‌اند
+    """
+
+    # بررسی احراز هویت کاربر
+    session = get_session(request)
+
+    if not session:
+        return Response(
+            {"message": "دسترسی غیرمجاز."},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    # دریافت فایل از فرانت‌اند
+    file = request.FILES.get("document")
+
+    if not file:
+        return Response(
+            {"message": "فایلی ارسال نشده است."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # بررسی فرمت مجاز فایل
+    allowed_extensions = {
+        ".jpg", ".jpeg", ".png", ".webp", ".pdf"
+    }
+
+    extension = os.path.splitext(file.name)[1].lower()
+
+    if extension not in allowed_extensions:
+        return Response(
+            {"message": "فرمت فایل مجاز نیست."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # بررسی حجم فایل: حداکثر 10 مگابایت
+    if file.size == 0 or file.size > 10 * 1024 * 1024:
+        return Response(
+            {
+                "message":
+                "حجم فایل باید بیشتر از صفر و حداکثر ۱۰ مگابایت باشد."
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # ذخیره موقت فایل
+    file_path = default_storage.save(
+        f"temp/{file.name}",
+        file
+    )
+
+    full_path = default_storage.path(file_path)
+
+    try:
+        # ارسال فایل به Paperless
+        result = upload_document(
+            full_path,
+            title=request.data.get("title", file.name)
+        )
+
+        if result.get("success"):
+            return Response(
+                {
+                    "message": "سند برای پردازش به Paperless ارسال شد.",
+                    "task_id": result.get("task_id")
+                },
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            {
+                "message": "خطا در آپلود سند.",
+                "error": result.get("error", "خطای نامشخص")
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    finally:
+        # حذف فایل موقت پس از پایان درخواست
+        if os.path.exists(full_path):
+            os.remove(full_path)
+
+
+@api_view(["GET"])
+def paperless_task_status(request, task_id):
+    """
+    بررسی وضعیت پردازش سند در Paperless
+    """
+    session = get_session(request)
+    if not session:
+        return Response(
+            {"message": "دسترسی غیرمجاز."},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    task_data = get_task_status(task_id)
+    if task_data:
+        return Response(task_data, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "تسک پیدا نشد."},
+        status=status.HTTP_404_NOT_FOUND
+    )
+
+@api_view(["GET"])
+def paperless_search(request):
+    """
+    جستجو در اسناد Paperless
+    """
+    session = get_session(request)
+    if not session:
+        return Response(
+            {"message": "دسترسی غیرمجاز."},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    query = request.query_params.get('q', '')
+    if not query:
+        return Response(
+            {"message": "عبارت جستجو ارسال نشده."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    results = search_documents(query)
+    if results:
+        return Response(results, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "خطا در جستجو."},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR
     )

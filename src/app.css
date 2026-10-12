@@ -470,3 +470,289 @@ button {
   border-radius: 10px;
   padding:15px;
 }
+/* ===== Dashboard ===== */
+.dashboard-card {
+  gap: 1.5rem;
+}
+
+.dashboard-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+.dashboard-hello {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.dashboard-date {
+  font-size: 0.95rem;
+  color: #8a8a8a;
+  margin-top: -10px;
+}
+
+.dashboard-upload-panel {
+  background: #1e3a8a; /* سورمه‌ای */
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: right;
+  margin-top: 10px;
+}
+
+.dashboard-upload-title {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.dashboard-upload-description {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.dashboard-upload-button {
+  background: #60a5fa; /* آبی کم‌رنگ‌تر */
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 0.5rem;
+    display: flex;      
+  align-items: center;     
+    justify-content: center;    
+  gap: 0.5rem;
+    flex-direction: row-reverse;  
+
+}
+
+.dashboard-upload-button:hover {
+  background: #3b82f6;
+}
+/* ورودی فایل با استفاده از دکمه سفارشی باز می‌شود */
+.dashboard-file-input {
+  display: none;
+}
+
+/* بخش فایل انتخاب‌شده */
+.document-upload-preview {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid #d7dde5;
+  border-radius: 14px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* پیش‌نمایش تصویر */
+.document-preview-image {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  max-height: 280px;
+  margin: 0 auto 8px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* نام فایل */
+.document-file-name {
+  direction: auto;
+  overflow-wrap: anywhere;
+}
+
+/* دکمه‌های ارسال و حذف */
+.document-upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.document-upload-actions button {
+  flex: 1 1 140px;
+}
+
+.document-upload-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.document-cancel-button {
+  padding: 12px 18px;
+  border: 1px solid #d7dde5;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* پیام وضعیت آپلود */
+.document-upload-message {
+  margin-top: 14px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+
+/* ===== کارت‌های عملیات سریع ===== */
+.dashboard-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.dashboard-action-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  min-height: 50px;
+  text-align: center;
+}
+
+.dashboard-action-card:hover {
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.12);
+  transform: translateY(-2px);
+}
+
+.dashboard-action-icon {
+  color: #1e3a8a; /* آبی سورمه‌ای */
+  flex-shrink: 0;
+}
+
+.dashboard-action-label {
+  color: #1a1a1a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ===== هدر بخش (نیازمند توجه / مشاهده همه) ===== */
+.dashboard-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-section-title {
+  color: #1a1a1a;
+  font-size: 1.2rem;      /* یه‌کم کوچیک‌تر از سلام (1.5rem) */
+  font-weight: 700;
+  margin: 0;
+}
+
+.dashboard-section-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1e3a8a;         /* آبی سورمه‌ای هماهنگ با کارت */
+  font-size: 0.85rem;     /* کوچیک‌تر از عنوان */
+  font-weight: 400;       /* بدون بولد */
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.dashboard-section-link:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+/* ===== لیست نیازمند توجه ===== */
+.dashboard-attention-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 0.6rem;
+  box-shadow: 0 2px 10px rgba(30, 58, 138, 0.08);
+}
+
+.dashboard-attention-item {
+  background: #f9fafb;
+  border: 1px solid #ffffff;
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: right;
+}
+
+/* آیکون سمت راست — کادر مربع آبی کم‌رنگ */
+.dashboard-attention-icon-box {
+  background: #dbeafe;           /* آبی کم‌رنگ */
+  color: #1e3a8a;                /* آیکون آبی پررنگ */
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* متن وسط — فونت H3 */
+.dashboard-attention-title {
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* بج فوری — صورتی مایل به گلبهی، متن قرمز */
+.dashboard-attention-badge {
+  background: #fee2e2;           /* صورتی/گلبهی کم‌رنگ */
+  color: #dc2626;                /* قرمز */
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* فلش سمت چپ کارت دوم */
+.dashboard-attention-arrow {
+  color: #9ca3af;                /* خاکستری ملایم */
+  flex-shrink: 0;
+}
+
+/* بج جدید — آبی کم‌رنگ، متن آبی پررنگ */
+.dashboard-fresh-badge {
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}

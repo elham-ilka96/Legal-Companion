@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import "./app.css";
 import userRoundKey from "./assets/user-round-key.svg";
@@ -34,6 +33,19 @@ const getCurrentPersianYear = () =>
         .format(new Date())
     )
   );
+
+const getCurrentPersianDate = () => {
+  const parts = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).formatToParts(new Date());
+
+  const get = (type) => parts.find((p) => p.type === type)?.value || "";
+
+  return `${get("weekday")}، ${get("day")} ${get("month")} ${get("year")}`;
+};
 
 function LockIcon({ className = "" }) {
   return (
@@ -107,6 +119,17 @@ function App() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [authToken, setAuthToken] = useState("");
+  // =========================
+// آپلود اسناد در Paperless
+// =========================
+
+const documentInputRef = useRef(null);
+
+const [selectedDocument, setSelectedDocument] = useState(null);
+const [documentPreviewUrl, setDocumentPreviewUrl] = useState("");
+const [uploadingDocument, setUploadingDocument] = useState(false);
+const [uploadMessage, setUploadMessage] = useState("");
+
   const [resendSeconds, setResendSeconds] = useState(0);
   const verificationInputs = useRef([]);
 
@@ -146,7 +169,7 @@ function App() {
   };
 
   const getProgress = () => {
-    if (authScreen === "complete") return 1;
+    if (authScreen === "dashboard" || authScreen === "complete") return 1;
     if (authScreen === "identity") return 0.78;
     if (authScreen === "verify") return 0.57;
     if (authScreen === "phone" || authScreen === "password") return 0.32;
@@ -162,6 +185,21 @@ function App() {
     }, 1000);
     return () => window.clearTimeout(timer);
   }, [authScreen, resendSeconds]);
+
+  // ساخت و پاک‌کردن آدرس موقت پیش‌نمایش تصویر
+useEffect(() => {
+  if (!selectedDocument || !selectedDocument.type.startsWith("image/")) {
+    setDocumentPreviewUrl("");
+    return undefined;
+  }
+
+  const previewUrl = URL.createObjectURL(selectedDocument);
+  setDocumentPreviewUrl(previewUrl);
+
+  return () => {
+    URL.revokeObjectURL(previewUrl);
+  };
+}, [selectedDocument]);
 
   const formatResendTime = () =>
     `${Math.floor(resendSeconds / 60).toString().padStart(2, "0")}:${(resendSeconds % 60)
@@ -191,67 +229,67 @@ function App() {
     setPhoneErrorKind("");
   };
 
-const handleMobileSubmit = async (e) => {
-  e.preventDefault();
+  const handleMobileSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!/^09\d{9}$/.test(mobile)) {
-    setPhoneErrorKind("invalid");
-    setError("شماره موبایل معتبر نیست؛ با ۰۹ شروع کنید.");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/send-code/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mobile: mobile,
-          mode: authMode,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      if (response.status === 429) {
-        setResendSeconds(data.retryAfter || 180);
-        setPhoneErrorKind("send");
-        setError("پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید.");
-        return;
-      }
-      if (response.status === 400) {
-        setPhoneErrorKind("invalid");
-        setError("شماره موبایل معتبر نیست؛ با ۰۹ شروع کنید.");
-        return;
-      }
-      setPhoneErrorKind("send");
-      setError(response.status >= 500
-        ? "پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید."
-        : data.message || "پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید.");
+    if (!/^09\d{9}$/.test(mobile)) {
+      setPhoneErrorKind("invalid");
+      setError("شماره موبایل معتبر نیست؛ با ۰۹ شروع کنید.");
       return;
     }
 
-    setError("");
-    setPhoneErrorKind("");
-    setVerificationCode("");
-    setResendSeconds(180);
-    navigateTo("verify");
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/api/send-code/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            mobile: mobile,
+            mode: authMode,
+          }),
+        }
+      );
 
-  } catch (error) {
-    console.error(error);
-    setPhoneErrorKind("send");
-    setError("پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید.");
-  }
-};
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          setResendSeconds(data.retryAfter || 180);
+          setPhoneErrorKind("send");
+          setError("پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید.");
+          return;
+        }
+        if (response.status === 400) {
+          setPhoneErrorKind("invalid");
+          setError("شماره موبایل معتبر نیست؛ با ۰۹ شروع کنید.");
+          return;
+        }
+        setPhoneErrorKind("send");
+        setError(response.status >= 500
+          ? "پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید."
+          : data.message || "پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید.");
+        return;
+      }
+
+      setError("");
+      setPhoneErrorKind("");
+      setVerificationCode("");
+      setResendSeconds(180);
+      navigateTo("verify");
+
+    } catch (error) {
+      console.error(error);
+      setPhoneErrorKind("send");
+      setError("پیامک ارسال نشد، چند لحظه دیگر دوباره تلاش کنید.");
+    }
+  };
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/send-code/", {
+      const response = await fetch("http://127.0.0.1:8001/api/send-code/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile, mode: authMode }),
@@ -318,96 +356,96 @@ const handleMobileSubmit = async (e) => {
       verificationInputs.current[index - 1]?.focus();
     }
   };
-  
-const handleVerificationSubmit = async () => {
-  if (!/^\d{6}$/.test(verificationCode)) {
-    setError("کد تأیید باید 6 رقمی باشد.");
-    return;
-  }
 
-  try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/verify-code/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mobile: mobile,
-          code: verificationCode,
-          mode: authMode,
-        }),
-      }
-    );
+  const handleVerificationSubmit = async () => {
+    if (!/^\d{6}$/.test(verificationCode)) {
+      setError("کد تأیید باید 6 رقمی باشد.");
+      return;
+    }
 
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/api/verify-code/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            mobile: mobile,
+            code: verificationCode,
+            mode: authMode,
+          }),
+        }
+      );
 
-    if (!response.ok) {
-      if (response.status === 410) {
-        setResendSeconds(0);
-        setVerificationCode("");
-        setError("کد منقضی شده؛ یک کد تازه دریافت کنید.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 410) {
+          setResendSeconds(0);
+          setVerificationCode("");
+          setError("کد منقضی شده؛ یک کد تازه دریافت کنید.");
+          return;
+        }
+        setError(data.message || "کد تأیید اشتباه است.");
         return;
       }
-      setError(data.message || "کد تأیید اشتباه است.");
-      return;
-    }
 
-    if (authMode === "signup") {
+      if (authMode === "signup") {
+        setAuthToken(data.token);
+        navigateTo("identity");
+        setError("");
+        return;
+      }
+
       setAuthToken(data.token);
-      navigateTo("identity");
-      setError("");
-      return;
-    }
+      // ==========================
+      // دریافت پرونده با شماره موبایل
+      // ==========================
 
-    setAuthToken(data.token);
-    // ==========================
-    // دریافت پرونده با شماره موبایل
-    // ==========================
+      const patientResponse = await fetch(
+        `http://127.0.0.1:8001/api/patients/${mobile}`,
+        { headers: { Authorization: `Bearer ${data.token}` } }
+      );
 
-    const patientResponse = await fetch(
-      `http://127.0.0.1:8000/api/patients/${mobile}`,
-      { headers: { Authorization: `Bearer ${data.token}` } }
-    );
+      if (patientResponse.ok) {
+        const patientData = await patientResponse.json();
 
-    if (patientResponse.ok) {
-      const patientData = await patientResponse.json();
-
-      setPatient({
-        name: patientData.name || "",
-        nationalId: patientData.nationalId || "",
-        age: patientData.age || "",
-        yearOfBirth: patientData.age
+        setPatient({
+          name: patientData.name || "",
+          nationalId: patientData.nationalId || "",
+          age: patientData.age || "",
+          yearOfBirth: patientData.age
+            ? String(getCurrentPersianYear() - Number(patientData.age))
+            : "",
+          gender: patientData.gender || "",
+        });
+        const [savedLastName = "", ...savedFirstNames] = (patientData.name || "").split(/\s+/);
+        setLastName(savedLastName);
+        setFirstName(savedFirstNames.join(" "));
+        setBirthYear(patientData.age
           ? String(getCurrentPersianYear() - Number(patientData.age))
-          : "",
-        gender: patientData.gender || "",
-      });
-      const [savedLastName = "", ...savedFirstNames] = (patientData.name || "").split(/\s+/);
-      setLastName(savedLastName);
-      setFirstName(savedFirstNames.join(" "));
-      setBirthYear(patientData.age
-        ? String(getCurrentPersianYear() - Number(patientData.age))
-        : "");
-    } else if (patientResponse.status === 404) {
-      setBirthYear("");
-    } else {
-      const patientError = await patientResponse.json();
-      setError(patientError.message || "دریافت اطلاعات حساب انجام نشد.");
-      return;
+          : "");
+      } else if (patientResponse.status === 404) {
+        setBirthYear("");
+      } else {
+        const patientError = await patientResponse.json();
+        setError(patientError.message || "دریافت اطلاعات حساب انجام نشد.");
+        return;
+      }
+
+      setError("");
+      navigateTo("identity");
+
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "ارتباط با سرور برقرار نشد. مطمئن شوید Backend روشن است."
+      );
     }
-
-    setError("");
-    navigateTo("identity");
-
-  } catch (error) {
-    console.error(error);
-
-    setError(
-      "ارتباط با سرور برقرار نشد. مطمئن شوید Backend روشن است."
-    );
-  }
-};
+  };
 
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
@@ -423,7 +461,7 @@ const handleVerificationSubmit = async () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      const response = await fetch("http://127.0.0.1:8001/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile, password }),
@@ -511,7 +549,7 @@ const handleVerificationSubmit = async () => {
     if (authMode === "signup") formData.append("password", password);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/patients/", {
+      const response = await fetch("http://127.0.0.1:8001/api/patients/", {
         method: "POST",
         headers: { Authorization: `Bearer ${authToken}` },
         body: formData,
@@ -533,413 +571,518 @@ const handleVerificationSubmit = async () => {
     }
   };
 
-  if (authScreen !== "complete") {
+  // =========================
+// انتخاب تصویر یا سند
+// =========================
+
+const handleDocumentSelect = (event) => {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  setUploadMessage("");
+
+  // فرمت‌های مجاز
+  const allowedExtensions = /\.(jpg|jpeg|png|webp|pdf)$/i;
+
+  if (!allowedExtensions.test(file.name)) {
+    setSelectedDocument(null);
+    setUploadMessage(
+      "فرمت فایل مجاز نیست. تصویر JPG، PNG، WebP یا فایل PDF انتخاب کنید."
+    );
+    event.target.value = "";
+    return;
+  }
+
+  // حداکثر حجم فایل: ۱۰ مگابایت
+  if (file.size === 0 || file.size > 10 * 1024 * 1024) {
+    setSelectedDocument(null);
+    setUploadMessage(
+      "حجم فایل باید بیشتر از صفر و حداکثر ۱۰ مگابایت باشد."
+    );
+    event.target.value = "";
+    return;
+  }
+
+  setSelectedDocument(file);
+};
+
+
+// =========================
+// ارسال سند به Django
+// =========================
+
+const handlePaperlessUpload = async () => {
+  if (!authToken) {
+    setUploadMessage(
+      "نشست ورود معتبر نیست؛ لطفاً دوباره وارد حساب شوید."
+    );
+    return;
+  }
+
+  if (!selectedDocument) {
+    setUploadMessage("ابتدا یک تصویر یا سند انتخاب کنید.");
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("document", selectedDocument);
+  formData.append("title", selectedDocument.name);
+
+  setUploadingDocument(true);
+  setUploadMessage("");
+
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8001/api/paperless/upload/",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: formData,
+      }
+    );
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      setUploadMessage(
+        data.message || data.error || "آپلود سند انجام نشد."
+      );
+      return;
+    }
+
+    setUploadMessage(
+      `سند به Paperless ارسال شد و پردازش آن آغاز شده است. شناسه پردازش: ${
+        data.task_id || "دریافت نشد"
+      }`
+    );
+
+    setSelectedDocument(null);
+
+    if (documentInputRef.current) {
+      documentInputRef.current.value = "";
+    }
+  } catch (requestError) {
+    console.error(requestError);
+
+    setUploadMessage(
+      "ارتباط با سرور برقرار نشد. آدرس Django و وضعیت سرویس‌ها را بررسی کنید."
+    );
+  } finally {
+    setUploadingDocument(false);
+  }
+};
+
+  if (authScreen !== "complete" && authScreen !== "dashboard") {
     return (
-    <AppFrame
-      progress={getProgress()}
-      canGoBack={screenHistory.length > 0}
-      onBack={goBack}
-    >
-    <main className="auth-shell">
-      <section className="auth-card">
-          {authScreen === "welcome" && (
-            <>
-              <div className="auth-logo">
-  <img src={userRoundKey} alt="ورود امن" />
-</div>           
-              <h1 className="auth-title">ورود امن به همراه حقوقی شما</h1>
-              <p className="auth-description">
-                برای پیگیری پرونده‌ها و خدمات قضایی وارد حساب خود شوید یا حساب تازه‌ای بسازید.
-              </p>
-
-              <div className="privacy-notice">
-                <LockIcon className="privacy-lock" />
-                <p>
-            ورود شما امن است و      اطلاعات بدون اجازه شما به اشتراک گذاشته نمی‌شود.
-                </p>
-              </div>
-
-              <div className="auth-actions">
-                <button
-                  type="button"
-                  className="auth-button auth-button-primary"
-                  onClick={() => {
-                    setAuthMode("login");
-                    navigateTo("phone");
-                    setError("");
-                    setPhoneErrorKind("");
-                  }}
-                >
-                  ورود
-                </button>
-                <button
-                  type="button"
-                  className="auth-button auth-button-primary"
-                  onClick={() => {
-                    setAuthMode("signup");
-                    navigateTo("phone");
-                    setError("");
-                    setPhoneErrorKind("");
-                  }}
-                >
-                  ثبت‌ نام
-                </button>
-              </div>
-            </>
-          )}
-
-          {authScreen === "phone" && (
-            <>
-              <h1 className="auth-title auth-page-title">
-                {authMode === "signup" ? "ثبت‌نام" : "ورود با پیامک"}
-              </h1>
-              <p className="auth-description">
-                {authMode === "signup"
-                  ? "شماره موبایلی که به نام خودتان است وارد کنید."
-                  : "شماره موبایل ثبت‌شده در حساب را وارد کنید."}
-              </p>
-
-              <form className="auth-form" onSubmit={handleMobileSubmit}>
-                <div className={`phone-input-panel ${phoneErrorKind === "invalid" ? "has-error" : ""}`}>
-                  <label htmlFor="mobile-number">شماره موبایل</label>
-                  <input
-                    id="mobile-number"
-                    className={phoneErrorKind === "invalid" || phoneErrorKind === "send" ? "input-error" : ""}
-                    type="tel"
-                    value={mobile}
-                    onChange={handleMobileChange}
-                    placeholder="مثال :147***0912"
-                    maxLength="11"
-                    inputMode="numeric"
-                    autoComplete="tel"
-                    aria-invalid={phoneErrorKind !== ""}
-                    dir="ltr"
-                  />
+      <AppFrame
+        progress={getProgress()}
+        canGoBack={screenHistory.length > 0}
+        onBack={goBack}
+      >
+        <main className="auth-shell">
+          <section className="auth-card">
+            {authScreen === "welcome" && (
+              <>
+                <div className="auth-logo">
+                  <img src={userRoundKey} alt="ورود امن" />
                 </div>
-                {error && (
-                  <div className="phone-error-message" role="alert">
-                    {phoneErrorKind === "invalid"
-                      ? "شماره موبایل معتبر نیست؛ با ۰۹ شروع کنید."
-                      : error}
-                  </div>
-                )}
-                <button
-                  className="auth-button auth-button-primary"
-                  type="submit"
-                >
-                  {phoneErrorKind === "send" ? "تلاش دوباره برای ارسال" : "دریافت کد تأیید"}
-                </button>
-              </form>
+                <h1 className="auth-title">ورود امن به همراه حقوقی شما</h1>
+                <p className="auth-description">
+                  برای پیگیری پرونده‌ها و خدمات قضایی وارد حساب خود شوید یا حساب تازه‌ای بسازید.
+                </p>
 
-              {authMode === "login" ? (
-                <button
-                  className="auth-text-button"
-                  type="button"
-                  onClick={() => {
-                    navigateTo("password");
-                    setError("");
-                  }}
-                >
-                  ورود با رمز عبور
-                </button>
-              ) : (
-                <p className="auth-switch">
-                  حساب دارید؟{" "}
+                <div className="privacy-notice">
+                  <LockIcon className="privacy-lock" />
+                  <p>
+                    ورود شما امن است و اطلاعات بدون اجازه شما به اشتراک گذاشته نمی‌شود.
+                  </p>
+                </div>
+
+                <div className="auth-actions">
                   <button
                     type="button"
+                    className="auth-button auth-button-primary"
                     onClick={() => {
                       setAuthMode("login");
+                      navigateTo("phone");
                       setError("");
                       setPhoneErrorKind("");
                     }}
                   >
                     ورود
                   </button>
-                </p>
-              )}
-            </>
-          )}
-
-          {authScreen === "password" && (
-            <>
-              <h1 className="auth-title auth-page-title">ورود با رمز عبور</h1>
-              <p className="auth-description">شماره موبایل و رمز عبور حساب خود را وارد کنید.</p>
-              <form className="auth-form" onSubmit={handlePasswordLogin}>
-                <div className="phone-input-panel">
-                  <label htmlFor="password-mobile">شماره موبایل</label>
-                  <input
-                    id="password-mobile"
-                    type="tel"
-                    value={mobile}
-                    onChange={handleMobileChange}
-                    placeholder="مثال :147***0912"
-                    maxLength="11"
-                    inputMode="numeric"
-                    autoComplete="tel"
-                    dir="ltr"
-                  />
+                  <button
+                    type="button"
+                    className="auth-button auth-button-primary"
+                    onClick={() => {
+                      setAuthMode("signup");
+                      navigateTo("phone");
+                      setError("");
+                      setPhoneErrorKind("");
+                    }}
+                  >
+                    ثبت‌ نام
+                  </button>
                 </div>
-                <label htmlFor="account-password">رمز عبور</label>
-                <input
-                  id="account-password"
-                  type="password"
-                  value={password}
-                  onChange={(event) => {
-                    setPassword(event.target.value);
+              </>
+            )}
+
+            {authScreen === "phone" && (
+              <>
+                <h1 className="auth-title auth-page-title">
+                  {authMode === "signup" ? "ثبت‌نام" : "ورود با پیامک"}
+                </h1>
+                <p className="auth-description">
+                  {authMode === "signup"
+                    ? "شماره موبایلی که به نام خودتان است وارد کنید."
+                    : "شماره موبایل ثبت‌شده در حساب را وارد کنید."}
+                </p>
+
+                <form className="auth-form" onSubmit={handleMobileSubmit}>
+                  <div className={`phone-input-panel ${phoneErrorKind === "invalid" ? "has-error" : ""}`}>
+                    <label htmlFor="mobile-number">شماره موبایل</label>
+                    <input
+                      id="mobile-number"
+                      className={phoneErrorKind === "invalid" || phoneErrorKind === "send" ? "input-error" : ""}
+                      type="tel"
+                      value={mobile}
+                      onChange={handleMobileChange}
+                      placeholder="مثال :147***0912"
+                      maxLength="11"
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      aria-invalid={phoneErrorKind !== ""}
+                      dir="ltr"
+                    />
+                  </div>
+                  {error && (
+                    <div className="phone-error-message" role="alert">
+                      {phoneErrorKind === "invalid"
+                        ? "شماره موبایل معتبر نیست؛ با ۰۹ شروع کنید."
+                        : error}
+                    </div>
+                  )}
+                  <button
+                    className="auth-button auth-button-primary"
+                    type="submit"
+                  >
+                    {phoneErrorKind === "send" ? "تلاش دوباره برای ارسال" : "دریافت کد تأیید"}
+                  </button>
+                </form>
+
+                {authMode === "login" ? (
+                  <button
+                    className="auth-text-button"
+                    type="button"
+                    onClick={() => {
+                      navigateTo("password");
+                      setError("");
+                    }}
+                  >
+                    ورود با رمز عبور
+                  </button>
+                ) : (
+                  <p className="auth-switch">
+                    حساب دارید؟{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode("login");
+                        setError("");
+                        setPhoneErrorKind("");
+                      }}
+                    >
+                      ورود
+                    </button>
+                  </p>
+                )}
+              </>
+            )}
+
+            {authScreen === "password" && (
+              <>
+                <h1 className="auth-title auth-page-title">ورود با رمز عبور</h1>
+                <p className="auth-description">شماره موبایل و رمز عبور حساب خود را وارد کنید.</p>
+                <form className="auth-form" onSubmit={handlePasswordLogin}>
+                  <div className="phone-input-panel">
+                    <label htmlFor="password-mobile">شماره موبایل</label>
+                    <input
+                      id="password-mobile"
+                      type="tel"
+                      value={mobile}
+                      onChange={handleMobileChange}
+                      placeholder="مثال :147***0912"
+                      maxLength="11"
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      dir="ltr"
+                    />
+                  </div>
+                  <label htmlFor="account-password">رمز عبور</label>
+                  <input
+                    id="account-password"
+                    type="password"
+                    value={password}
+                    onChange={(event) => {
+                      setPassword(event.target.value);
+                      setError("");
+                    }}
+                    autoComplete="current-password"
+                  />
+                  {error && <div className="error-message" role="alert">{error}</div>}
+                  <button className="auth-button auth-button-primary" type="submit">
+                    ورود
+                  </button>
+                </form>
+                <button
+                  className="auth-text-button"
+                  type="button"
+                  onClick={() => {
+                    navigateTo("phone", true);
                     setError("");
                   }}
-                  autoComplete="current-password"
-                />
-                {error && <div className="error-message" role="alert">{error}</div>}
-                <button className="auth-button auth-button-primary" type="submit">
-                  ورود
-                </button>
-              </form>
-              <button
-                className="auth-text-button"
-                type="button"
-                onClick={() => {
-                  navigateTo("phone", true);
-                  setError("");
-                }}
-              >
-                ورود با پیامک
-              </button>
-            </>
-          )}
-
-          {authScreen === "verify" && (
-            <>
-              <h1 className="auth-title auth-page-title">
-                {authMode === "signup" ? "تأیید شماره موبایل" : "تأیید ورود"}
-              </h1>
-              {codeExpired && (
-                <p className="expired-heading" role="alert">
-                  مهلت استفاده از کد به پایان رسیده است.
-                </p>
-              )}
-              <p className="auth-description">
-                کد شش‌رقمی ارسال‌شده به شماره{" "}
-                <bdi className="verified-mobile" dir="ltr">{maskedMobile}</bdi>
-                {" "}را وارد کنید.
-              </p>
-              <form
-                className="auth-form verification-form"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  handleVerificationSubmit();
-                }}
-              >
-                <div className="verification-panel">
-                  
-                  <div className="verification-inputs" dir="ltr">
-                    {Array.from({ length: 6 }, (_, index) => (
-                      <input
-                        key={index}
-                        ref={(element) => {
-                          verificationInputs.current[index] = element;
-                        }}
-                        id={index === 0 ? "verification-code-1" : undefined}
-                        aria-label={`رقم ${index + 1} کد تأیید`}
-                        type="text"
-                        value={verificationCode[index] === " " ? "" : verificationCode[index] || ""}
-                        onChange={(event) => handleVerificationCodeChange(index, event)}
-                        onKeyDown={(event) => handleVerificationKeyDown(index, event)}
-                        onPaste={(event) => {
-                          event.preventDefault();
-                          handleVerificationCodeChange(index, {
-                            target: { value: event.clipboardData.getData("text") },
-                          });
-                        }}
-                        maxLength="6"
-                        inputMode="numeric"
-                        autoComplete={index === 0 ? "one-time-code" : "off"}
-                      />
-                    ))}
-                  </div>
-                  <p className={`verification-countdown ${codeExpired ? "expired" : ""}`}>
-                    {codeExpired ? "زمان کد: 00:00" : (
-                      <>ارسال دوباره تا <bdi dir="ltr">{formatResendTime()}</bdi></>
-                    )}
-                  </p>
-                  {!codeExpired && (
-                    <button
-                      className="resend-button"
-                      type="button"
-                      onClick={handleResendCode}
-                      disabled={resendSeconds > 0}
-                    >
-                      ارسال دوباره کد
-                    </button>
-                  )}
-                </div>
-                {error && !codeExpired && <div className="error-message" role="alert">{error}</div>}
-                {codeExpired && (
-                  <>
-                    <p className="expired-message" role="alert">
-                      کد منقضی شده؛ یک کد تازه دریافت کنید.
-                    </p>
-                    <button
-                      className="resend-button resend-button-expired"
-                      type="button"
-                      onClick={handleResendCode}
-                    >
-                      ارسال دوباره کد
-                    </button>
-                  </>
-                )}
-                <button
-                  className="auth-button auth-button-primary"
-                  type="submit"
-                  disabled={!/^\d{6}$/.test(verificationCode) || codeExpired}
                 >
-                  {authMode === "signup" ? "تأیید و ادامه" : "ورود"}
+                  ورود با پیامک
                 </button>
-              </form>
-              <button
-                className="auth-text-button"
-                type="button"
-                onClick={() => {
-                  navigateTo("phone", true);
-                  setVerificationCode("");
-                  setError("");
-                }}
-              >
-                تغییر شماره موبایل
-              </button>
-            </>
-          )}
+              </>
+            )}
 
-          {authScreen === "identity" && (
-            <>
-              <h1 className="auth-title auth-page-title">تکمیل اطلاعات</h1>
-              <p className="auth-description">
-                اطلاعات هویتی را مطابق مدارک رسمی وارد کنید.
-              </p>
-              <form className="auth-form" onSubmit={handleIdentityContinue}>
-                <div className="identity-name-grid">
-                  <div className="identity-field">
-                    <label htmlFor="identity-last-name"><span className="required-star">*</span> نام خانوادگی </label>
-                    <input
-                      id="identity-last-name"
-                      type="text"
-                      value={lastName}
-                      onChange={(event) => setLastName(event.target.value)}
-                      autoComplete="family-name"
-                      required
-                    />
-                  </div>
-                  <div className="identity-field">
-                    <label htmlFor="identity-first-name"> <span className="required-star">*</span>نام </label>
-                    <input
-                      id="identity-first-name"
-                      type="text"
-                      value={firstName}
-                      onChange={(event) => setFirstName(event.target.value)}
-                      autoComplete="given-name"
-                      required
-                    />
-                  </div>
-                </div>
-                <label htmlFor="identity-national-id"><span className="required-star">*</span>کد ملی </label>
-                <input
-                  id="identity-national-id"
-                  type="text"
-                  className={nationalIdError ? "national-id-error" : ""}
-                  value={patient.nationalId}
-                  onChange={(event) => {
-                    const nationalId = toEnglishDigits(event.target.value)
-                      .replace(/\D/g, "")
-                      .slice(0, 10);
-                    setPatient({ ...patient, nationalId });
-                    if (isValidIranianNationalId(nationalId)) {
-                      setNationalIdError(false);
-                    }
+            {authScreen === "verify" && (
+              <>
+                <h1 className="auth-title auth-page-title">
+                  {authMode === "signup" ? "تأیید شماره موبایل" : "تأیید ورود"}
+                </h1>
+                {codeExpired && (
+                  <p className="expired-heading" role="alert">
+                    مهلت استفاده از کد به پایان رسیده است.
+                  </p>
+                )}
+                <p className="auth-description">
+                  کد شش‌رقمی ارسال‌شده به شماره{" "}
+                  <bdi className="verified-mobile" dir="ltr">{maskedMobile}</bdi>
+                  {" "}را وارد کنید.
+                </p>
+                <form
+                  className="auth-form verification-form"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    handleVerificationSubmit();
                   }}
-                  maxLength="10"
-                  inputMode="numeric"
-                  dir="ltr"
-                  required
-                  aria-invalid={nationalIdError}
-                />
-                {nationalIdError && (
-                  <div className="national-id-error-message" role="alert">
-                    کد ملی ایرانی واردشده معتبر نیست.
+                >
+                  <div className="verification-panel">
+
+                    <div className="verification-inputs" dir="ltr">
+                      {Array.from({ length: 6 }, (_, index) => (
+                        <input
+                          key={index}
+                          ref={(element) => {
+                            verificationInputs.current[index] = element;
+                          }}
+                          id={index === 0 ? "verification-code-1" : undefined}
+                          aria-label={`رقم ${index + 1} کد تأیید`}
+                          type="text"
+                          value={verificationCode[index] === " " ? "" : verificationCode[index] || ""}
+                          onChange={(event) => handleVerificationCodeChange(index, event)}
+                          onKeyDown={(event) => handleVerificationKeyDown(index, event)}
+                          onPaste={(event) => {
+                            event.preventDefault();
+                            handleVerificationCodeChange(index, {
+                              target: { value: event.clipboardData.getData("text") },
+                            });
+                          }}
+                          maxLength="6"
+                          inputMode="numeric"
+                          autoComplete={index === 0 ? "one-time-code" : "off"}
+                        />
+                      ))}
+                    </div>
+                    <p className={`verification-countdown ${codeExpired ? "expired" : ""}`}>
+                      {codeExpired ? "زمان کد: 00:00" : (
+                        <>ارسال دوباره تا <bdi dir="ltr">{formatResendTime()}</bdi></>
+                      )}
+                    </p>
+                    {!codeExpired && (
+                      <button
+                        className="resend-button"
+                        type="button"
+                        onClick={handleResendCode}
+                        disabled={resendSeconds > 0}
+                      >
+                        ارسال دوباره کد
+                      </button>
+                    )}
                   </div>
-                )}
-                <label><span className="required-star">*</span>جنسیت </label>
-                <div className="gender-options">
-                  <label className={`gender-option ${patient.gender === "male" ? "selected" : ""}`}>
-                    <input
-                      type="radio"
-                      name="identity-gender"
-                      value="male"
-                      checked={patient.gender === "male"}
-                      onChange={(event) =>
-                        setPatient({ ...patient, gender: event.target.value })
-                      }
-                    />
-                    مرد
-                  </label>
-                  <label className={`gender-option ${patient.gender === "female" ? "selected" : ""}`}>
-                    <input
-                      type="radio"
-                      name="identity-gender"
-                      value="female"
-                      checked={patient.gender === "female"}
-                      onChange={(event) =>
-                        setPatient({ ...patient, gender: event.target.value })
-                      }
-                    />
-                    زن
-                  </label>
-                </div>
-                <label htmlFor="identity-birth-year"><span className="required-star">*</span>سال تولد </label>
-                <input
-                  id="identity-birth-year"
-                  type="text"
-                  value={birthYear}
-                  onChange={(event) =>
-                    setBirthYear(toEnglishDigits(event.target.value).replace(/\D/g, "").slice(0, 4))
-                  }
-                  maxLength="4"
-                  inputMode="numeric"
-                  placeholder="انتخاب سال شمسی"
-                  dir="ltr"
-                  required
-                />
-                {authMode === "signup" && (
-                  <>
-                    <label htmlFor="new-password">ایجاد رمز عبور</label>
-                    <input
-                      id="new-password"
-                      type="password"
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                      autoComplete="new-password"
-                      minLength="8"
-                    />
-                    <small>رمز عبور باید حداقل ۸ نویسه باشد.</small>
-                    <label htmlFor="confirm-password">تکرار رمز عبور</label>
-                    <input
-                      id="confirm-password"
-                      type="password"
-                      value={passwordConfirmation}
-                      onChange={(event) => setPasswordConfirmation(event.target.value)}
-                      autoComplete="new-password"
-                    />
-                  </>
-                )}
-                {error && <div className="error-message" role="alert">{error}</div>}
-                <button className="auth-button auth-button-primary" type="submit">
-                  تکمیل ثبت‌ نام
+                  {error && !codeExpired && <div className="error-message" role="alert">{error}</div>}
+                  {codeExpired && (
+                    <>
+                      <p className="expired-message" role="alert">
+                        کد منقضی شده؛ یک کد تازه دریافت کنید.
+                      </p>
+                      <button
+                        className="resend-button resend-button-expired"
+                        type="button"
+                        onClick={handleResendCode}
+                      >
+                        ارسال دوباره کد
+                      </button>
+                    </>
+                  )}
+                  <button
+                    className="auth-button auth-button-primary"
+                    type="submit"
+                    disabled={!/^\d{6}$/.test(verificationCode) || codeExpired}
+                  >
+                    {authMode === "signup" ? "تأیید و ادامه" : "ورود"}
+                  </button>
+                </form>
+                <button
+                  className="auth-text-button"
+                  type="button"
+                  onClick={() => {
+                    navigateTo("phone", true);
+                    setVerificationCode("");
+                    setError("");
+                  }}
+                >
+                  تغییر شماره موبایل
                 </button>
-              </form>
-            </>
-          )}
-          <SecurityFooter />
-        </section>
-      </main>
+              </>
+            )}
+
+            {authScreen === "identity" && (
+              <>
+                <h1 className="auth-title auth-page-title">تکمیل اطلاعات</h1>
+                <p className="auth-description">
+                  اطلاعات هویتی را مطابق مدارک رسمی وارد کنید.
+                </p>
+                <form className="auth-form" onSubmit={handleIdentityContinue}>
+                  <div className="identity-name-grid">
+                    <div className="identity-field">
+                      <label htmlFor="identity-last-name"><span className="required-star">*</span> نام خانوادگی </label>
+                      <input
+                        id="identity-last-name"
+                        type="text"
+                        value={lastName}
+                        onChange={(event) => setLastName(event.target.value)}
+                        autoComplete="family-name"
+                        required
+                      />
+                    </div>
+                    <div className="identity-field">
+                      <label htmlFor="identity-first-name"> <span className="required-star">*</span>نام </label>
+                      <input
+                        id="identity-first-name"
+                        type="text"
+                        value={firstName}
+                        onChange={(event) => setFirstName(event.target.value)}
+                        autoComplete="given-name"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <label htmlFor="identity-national-id"><span className="required-star">*</span>کد ملی </label>
+                  <input
+                    id="identity-national-id"
+                    type="text"
+                    className={nationalIdError ? "national-id-error" : ""}
+                    value={patient.nationalId}
+                    onChange={(event) => {
+                      const nationalId = toEnglishDigits(event.target.value)
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+                      setPatient({ ...patient, nationalId });
+                      if (isValidIranianNationalId(nationalId)) {
+                        setNationalIdError(false);
+                      }
+                    }}
+                    maxLength="10"
+                    inputMode="numeric"
+                    dir="ltr"
+                    required
+                    aria-invalid={nationalIdError}
+                  />
+                  {nationalIdError && (
+                    <div className="national-id-error-message" role="alert">
+                      کد ملی ایرانی واردشده معتبر نیست.
+                    </div>
+                  )}
+                  <label><span className="required-star">*</span>جنسیت </label>
+                  <div className="gender-options">
+                    <label className={`gender-option ${patient.gender === "male" ? "selected" : ""}`}>
+                      <input
+                        type="radio"
+                        name="identity-gender"
+                        value="male"
+                        checked={patient.gender === "male"}
+                        onChange={(event) =>
+                          setPatient({ ...patient, gender: event.target.value })
+                        }
+                      />
+                      مرد
+                    </label>
+                    <label className={`gender-option ${patient.gender === "female" ? "selected" : ""}`}>
+                      <input
+                        type="radio"
+                        name="identity-gender"
+                        value="female"
+                        checked={patient.gender === "female"}
+                        onChange={(event) =>
+                          setPatient({ ...patient, gender: event.target.value })
+                        }
+                      />
+                      زن
+                    </label>
+                  </div>
+                  <label htmlFor="identity-birth-year"><span className="required-star">*</span>سال تولد </label>
+                  <input
+                    id="identity-birth-year"
+                    type="text"
+                    value={birthYear}
+                    onChange={(event) =>
+                      setBirthYear(toEnglishDigits(event.target.value).replace(/\D/g, "").slice(0, 4))
+                    }
+                    maxLength="4"
+                    inputMode="numeric"
+                    placeholder="انتخاب سال شمسی"
+                    dir="ltr"
+                    required
+                  />
+                  {authMode === "signup" && (
+                    <>
+                      <label htmlFor="new-password">ایجاد رمز عبور</label>
+                      <input
+                        id="new-password"
+                        type="password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        autoComplete="new-password"
+                        minLength="8"
+                      />
+                      <small>رمز عبور باید حداقل ۸ نویسه باشد.</small>
+                      <label htmlFor="confirm-password">تکرار رمز عبور</label>
+                      <input
+                        id="confirm-password"
+                        type="password"
+                        value={passwordConfirmation}
+                        onChange={(event) => setPasswordConfirmation(event.target.value)}
+                        autoComplete="new-password"
+                      />
+                    </>
+                  )}
+                  {error && <div className="error-message" role="alert">{error}</div>}
+                  <button className="auth-button auth-button-primary" type="submit">
+                    تکمیل ثبت‌ نام
+                  </button>
+                </form>
+              </>
+            )}
+            <SecurityFooter />
+          </section>
+        </main>
       </AppFrame>
     );
   }
@@ -947,21 +1090,360 @@ const handleVerificationSubmit = async () => {
   // =========================
   // صفحه تکمیل ثبت‌نام
   // =========================
+  if (authScreen === "complete") {
+    return (
+      <AppFrame progress={getProgress()} canGoBack={screenHistory.length > 0} onBack={goBack}>
+        <main className="auth-shell">
+          <section className="auth-card completion-card" aria-live="polite">
+            <div className="completion-icon" aria-hidden="true">✓</div>
+            <h1 className="auth-title auth-page-title">اطلاعات با موفقیت ثبت شد</h1>
+            <p className="auth-description">
+              اطلاعات هویتی شما با موفقیت ذخیره شد.
+            </p>
+            <button
+              className="auth-button auth-button-primary"
+              type="button"
+              onClick={() => navigateTo("dashboard", true)}
+            >
+              ورود به حساب
+            </button>
+            <SecurityFooter />
+          </section>
+        </main>
+      </AppFrame>
+    );
+  }
+
+  // =========================
+  // صفحه داشبورد
+  // =========================
   return (
-    <AppFrame progress={getProgress()} canGoBack={screenHistory.length > 0} onBack={goBack}>
+    <AppFrame progress={getProgress()} canGoBack={false} onBack={() => {}}>
       <main className="auth-shell">
-        <section className="auth-card completion-card" aria-live="polite">
-          <div className="completion-icon" aria-hidden="true">✓</div>
-          <h1 className="auth-title auth-page-title">اطلاعات با موفقیت ثبت شد</h1>
-          <p className="auth-description">
-            اطلاعات هویتی شما با موفقیت ذخیره شد.
-          </p>
-          <button className="auth-button auth-button-primary" type="button" onClick={() => {
-            setAuthMode("login");
-            navigateTo("phone");
-          }}>
-            ورود به حساب
-          </button>
+        <section className="auth-card dashboard-card" aria-live="polite">
+
+          <header className="dashboard-greeting">
+            <h1 className="dashboard-hello">
+              سلام، {firstName || "کاربر"} 👋
+            </h1>
+            <p className="dashboard-date">
+              {getCurrentPersianDate()}
+            </p>
+          </header>
+
+          <div className="dashboard-upload-panel">
+            <h2 className="dashboard-upload-title">
+              پرونده‌های شما در یک نگاه
+            </h2>
+            <p className="dashboard-upload-description">
+              سند دادگاه، ابلاغیه یا قرارداد جدید را بارگذاری کنید تا هوش
+              مصنوعی آن را به زبان ساده تحلیل کند.
+            </p>
+            
+            {/* ورودی انتخاب فایل */}
+<input
+  ref={documentInputRef}
+  type="file"
+  className="dashboard-file-input"
+  accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf"
+  onChange={handleDocumentSelect}
+/>
+
+{/* بازکردن پنجره انتخاب فایل */}
+<button
+  type="button"
+  className="dashboard-upload-button"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="16 16 12 12 8 16" />
+    <line x1="12" y1="12" x2="12" y2="21" />
+    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+  </svg>
+  بارگذاری سند جدید
+</button>
+
+{/* اطلاعات فایل انتخاب‌شده */}
+{selectedDocument && (
+  <div className="document-upload-preview">
+    {documentPreviewUrl && (
+      <img
+        src={documentPreviewUrl}
+        alt="پیش‌نمایش سند انتخاب‌شده"
+        className="document-preview-image"
+      />
+    )}
+
+    <p>
+      <strong>فایل انتخاب‌شده:</strong>
+    </p>
+
+    <p className="document-file-name" dir="auto">
+      {selectedDocument.name}
+    </p>
+
+    <p>
+      حجم فایل:{" "}
+      {(selectedDocument.size / (1024 * 1024)).toFixed(2)} مگابایت
+    </p>
+
+    <div className="document-upload-actions">
+      <button
+        type="button"
+        className="dashboard-upload-button"
+        onClick={handlePaperlessUpload}
+        disabled={uploadingDocument}
+      >
+        {uploadingDocument
+          ? "در حال ارسال..."
+          : "ارسال به بایگانی"}
+      </button>
+
+      <button
+        type="button"
+        className="document-cancel-button"
+        disabled={uploadingDocument}
+        onClick={() => {
+          setSelectedDocument(null);
+          setUploadMessage("");
+
+          if (documentInputRef.current) {
+            documentInputRef.current.value = "";
+          }
+        }}
+      >
+        حذف فایل
+      </button>
+    </div>
+  </div>
+)}
+
+{/* نمایش نتیجه */}
+{uploadMessage && (
+  <p className="document-upload-message" role="status">
+    {uploadMessage}
+  </p>
+)}
+
+          </div>
+
+          <div className="dashboard-quick-actions">
+
+  <div className="dashboard-action-card">
+    <svg
+      className="dashboard-action-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {/* آیکون پرونده */}
+      <path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+    </svg>
+    <span className="dashboard-action-label">مشاهده پرونده</span>
+  </div>
+
+  <div className="dashboard-action-card">
+    <svg
+      className="dashboard-action-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {/* آیکون مداد */}
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+    </svg>
+    <span className="dashboard-action-label">افزودن یادداشت</span>
+  </div>
+
+  <div className="dashboard-action-card">
+    <svg
+      className="dashboard-action-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {/* آیکون موبایل */}
+      <rect x="6" y="2" width="12" height="20" rx="2" ry="2" />
+      <line x1="12" y1="18" x2="12.01" y2="18" />
+    </svg>
+    <span className="dashboard-action-label">تماس با وکیل</span>
+  </div>
+
+</div>
+
+<div className="dashboard-section-header">
+  <h3 className="dashboard-section-title">نیازمند توجه</h3>
+  <button type="button" className="dashboard-section-link">
+    مشاهده همه
+  </button>
+</div>
+
+
+<div className="dashboard-attention-list">
+
+  {/* کارت اول */}
+  <div className="dashboard-attention-item">
+    <div className="dashboard-attention-icon-box">
+      <svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="18"
+  height="18"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  aria-hidden="true"
+>
+  <rect x="3" y="3" width="18" height="18" rx="3" ry="3" />
+  <polyline points="8 12.5 11 15.5 16 9.5" />
+</svg>
+    </div>
+    <h3 className="dashboard-attention-title">تکمیل و ارسال لایحه دفاعیه</h3>
+    <span className="dashboard-attention-badge">فوری</span>
+  </div>
+
+  {/* کارت دوم */}
+  <div className="dashboard-attention-item">
+    <div className="dashboard-attention-icon-box">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    </div>
+    <h3 className="dashboard-attention-title">نزدیک‌ترین مهلت</h3>
+    <svg
+      className="dashboard-attention-arrow"
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  </div>
+
+</div>
+<div className="dashboard-section-header">
+  <h2 className="dashboard-section-title">تازه‌ها</h2>
+</div>
+
+<div className="dashboard-attention-list">
+
+  {/* کارت ابلاغیه جدید */}
+  <div className="dashboard-attention-item">
+    <div className="dashboard-attention-icon-box">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    </div>
+    <h3 className="dashboard-attention-title">ابلاغیه جدید برای پرونده مطالبه</h3>
+    <span className="dashboard-fresh-badge">جدید</span>
+  </div>
+
+  {/* کارت جلسه رسیدگی */}
+  <div className="dashboard-attention-item">
+    <div className="dashboard-attention-icon-box">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    </div>
+    <h3 className="dashboard-attention-title">جلسه رسیدگی</h3>
+    <svg
+      className="dashboard-attention-arrow"
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  </div>
+
+</div>
+
           <SecurityFooter />
         </section>
       </main>
