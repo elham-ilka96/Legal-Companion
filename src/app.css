@@ -1,6 +1,9 @@
+/* =========================================================
+   1. ریست و پایه
+   ========================================================= */
+
 * {
   box-sizing: border-box;
-
 }
 
 body {
@@ -23,8 +26,12 @@ button {
 }
 
 #root {
-  min-height: 100vh;
+  min-height: 80vh;
 }
+
+/* =========================================================
+   2. فریم اصلی، هدر، نوار پیشرفت
+   ========================================================= */
 
 .app-frame {
   width: min(100% - 32px, 560px);
@@ -32,12 +39,11 @@ button {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-    background: #f7f2f4 ;
-
+  background: #f7f2f4;
 }
 
 .app-header {
-  min-height: 76px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -49,17 +55,18 @@ button {
   align-items: center;
   gap: 10px;
   color: #1769c2;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
 }
 
 .judiciary-mark {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   border-radius: 13px;
   background: #1769c2;
+  margin-right: 20px;
 }
 
 .judiciary-mark svg {
@@ -96,41 +103,44 @@ button {
 .progress-fill {
   display: block;
   height: 100%;
-  margin-right:0;
+  margin-right: 0;
   margin-left: auto;
   border-radius: inherit;
   background: #1769c2;
   transition: width 220ms ease;
-  
-
 }
 
+/* =========================================================
+   3. پوسته و کارت صفحه‌های احراز هویت
+   ========================================================= */
+
 .auth-shell {
-  width: 100%;
+  width: 80%;
   flex: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 32px 0;
-      background: #f7f2f4 ;
-
-
+  padding: 0 0;
+  background: #f7f2f4;
+  margin-right: 60px;
+  min-height: 100vh;
 }
 
 .auth-card {
   width: 100%;
   min-width: 0;
   padding: 28px;
-  border: 1px solid rgba(226, 214, 222, 0.8);
-  border-radius: 22px;
-      background: #f7f2f4 ;
-  box-shadow: 0 10px 34px rgba(79, 50, 68, 0.06);
+  border: none;
+  border-radius: 0;
+  background: #f7f2f4;
+  box-shadow: none;
+  margin-top: px;
 }
 
 .auth-title {
   margin: 0 0 12px;
   color: #1769c2;
-  font-size: 28px;
+  font-size: 20px;
   line-height: 1.5;
   font-weight: 750;
 }
@@ -143,6 +153,21 @@ button {
   margin: 0 0 24px;
   color: #596474;
   line-height: 1.9;
+  font-size: 13px;
+}
+
+.auth-logo {
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+.auth-logo img {
+  width: 65px;
+  height: 60px;
+  background-color: #edf1f1;
+  border: 1px solid #f5f7f8;
+  border-radius: 10px;
+  padding: 15px;
 }
 
 .privacy-notice {
@@ -151,27 +176,31 @@ button {
   gap: 12px;
   margin: 24px 0;
   padding: 15px;
-  border: 0px solid #e5dce2;
+  border: 0 solid #e5dce2;
   border-radius: 14px;
   background: #edf1f1;
+  font-size: 13px;
 }
 
 .privacy-notice p {
   margin: 0;
   color: #445163;
   line-height: 1.8;
-  
 }
 
 .privacy-lock {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   flex: 0 0 auto;
   stroke: #1769c2;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* =========================================================
+   4. فرم‌ها و دکمه‌ها
+   ========================================================= */
 
 .auth-actions,
 .auth-form {
@@ -186,7 +215,7 @@ button {
   padding: 12px 18px;
   border: 1px solid #1769c2;
   border-radius: 12px;
-  font-weight: 700;
+  font-weight: 500;
   transition: background-color 140ms ease, color 140ms ease;
 }
 
@@ -293,6 +322,10 @@ button {
   margin: 18px auto 0;
 }
 
+/* =========================================================
+   5. کد تأیید و بازیابی
+   ========================================================= */
+
 .verification-form {
   gap: 16px;
 }
@@ -340,6 +373,10 @@ button {
   color: #344154;
   font-weight: 700;
 }
+
+/* =========================================================
+   6. تکمیل اطلاعات هویتی
+   ========================================================= */
 
 .identity-name-grid {
   display: grid;
@@ -394,6 +431,10 @@ button {
   outline-offset: 2px;
 }
 
+/* =========================================================
+   7. فوتر امنیت و کارت تکمیل ثبت‌نام
+   ========================================================= */
+
 .security-footer {
   display: flex;
   align-items: center;
@@ -429,48 +470,10 @@ button {
   font-size: 30px;
 }
 
-@media (max-width: 520px) {
-  .app-frame {
-    width: min(100% - 24px, 560px);
-  }
+/* =========================================================
+   8. داشبورد — ساختار کلی
+   ========================================================= */
 
-  .auth-shell {
-    padding: 22px 0;
-  }
-
-  .auth-card {
-    padding: 22px 18px;
-    border-radius: 18px;
-  }
-
-  .auth-title {
-    font-size: 24px;
-  }
-
-  .auth-page-title {
-    font-size: 21px;
-  }
-
-  .identity-name-grid {
-    gap: 9px;
-  }
-}
-.auth-logo {
-  text-align: right;
-  margin-bottom: 15px;
-  
-  
-}
-
-.auth-logo img {
-  width: 70px;
-  height: 70px;
-  background-color: #edf1f1;
-  border: 1px solid #f5f7f8;
-  border-radius: 10px;
-  padding:15px;
-}
-/* ===== Dashboard ===== */
 .dashboard-card {
   gap: 1.5rem;
 }
@@ -483,23 +486,27 @@ button {
 }
 
 .dashboard-hello {
-  font-size: 1.5rem;
+  font-size: 0.9rem;
   font-weight: 700;
   margin: 0;
   color: #1a1a1a;
 }
 
 .dashboard-date {
-  font-size: 0.95rem;
+  font-size: 0.7rem;
   color: #8a8a8a;
   margin-top: -10px;
 }
 
+/* =========================================================
+   9. داشبورد — کارت آبی آپلود سند
+   ========================================================= */
+
 .dashboard-upload-panel {
-  background: #1e3a8a; /* سورمه‌ای */
+  background: #1e3a8a;
   color: #ffffff;
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -509,119 +516,62 @@ button {
 
 .dashboard-upload-title {
   color: #ffffff;
-  font-size: 1.25rem;
+  font-size: 0.8rem;
   font-weight: 700;
   margin: 0;
 }
 
 .dashboard-upload-description {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95rem;
-  line-height: 1.8;
+  font-size: 0.7rem;
+  
   margin: 0;
 }
 
 .dashboard-upload-button {
-  background: #60a5fa; /* آبی کم‌رنگ‌تر */
+  background: #60a5fa;
   color: #ffffff;
   border: none;
   border-radius: 10px;
-  padding: 0.85rem 1rem;
-  font-size: 1rem;
+  padding:  0.3rem;
+  font-size: 0.7rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: background 0.2s ease;
-  margin-top: 0.5rem;
-    display: flex;      
-  align-items: center;     
-    justify-content: center;    
+  margin-top: 0.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-    flex-direction: row-reverse;  
-
+  flex-direction: row-reverse;
 }
 
 .dashboard-upload-button:hover {
   background: #3b82f6;
 }
-/* ورودی فایل با استفاده از دکمه سفارشی باز می‌شود */
+
 .dashboard-file-input {
   display: none;
 }
 
-/* بخش فایل انتخاب‌شده */
-.document-upload-preview {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-  padding: 16px;
-  border: 1px solid #d7dde5;
-  border-radius: 14px;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
+/* =========================================================
+   10. داشبورد — سه کارت عملیات سریع
+   ========================================================= */
 
-/* پیش‌نمایش تصویر */
-.document-preview-image {
-  display: block;
-  width: 100%;
-  max-width: 360px;
-  max-height: 280px;
-  margin: 0 auto 8px;
-  object-fit: contain;
-  border-radius: 10px;
-}
-
-/* نام فایل */
-.document-file-name {
-  direction: auto;
-  overflow-wrap: anywhere;
-}
-
-/* دکمه‌های ارسال و حذف */
-.document-upload-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.document-upload-actions button {
-  flex: 1 1 140px;
-}
-
-.document-upload-actions button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.document-cancel-button {
-  padding: 12px 18px;
-  border: 1px solid #d7dde5;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
-}
-
-/* پیام وضعیت آپلود */
-.document-upload-message {
-  margin-top: 14px;
-  line-height: 1.9;
-  overflow-wrap: anywhere;
-}
-
-/* ===== کارت‌های عملیات سریع ===== */
 .dashboard-quick-actions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
+  padding: -20px;
 }
 
 .dashboard-action-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
-  padding: 1rem 0.5rem;
+  padding: 0.4rem 0.2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -629,7 +579,7 @@ button {
   gap: 0.75rem;
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.15s ease;
-  min-height: 50px;
+  min-height: 30px;
   text-align: center;
 }
 
@@ -639,29 +589,32 @@ button {
 }
 
 .dashboard-action-icon {
-  color: #1e3a8a; /* آبی سورمه‌ای */
+  color: #1e3a8a;
   flex-shrink: 0;
 }
 
 .dashboard-action-label {
   color: #1a1a1a;
-  font-size: 0.85rem;
+  font-size: 0.5rem;
   font-weight: 600;
   line-height: 1.4;
 }
 
-/* ===== هدر بخش (نیازمند توجه / مشاهده همه) ===== */
+/* =========================================================
+   11. داشبورد — هدر بخش (نیازمند توجه / مشاهده همه)
+   ========================================================= */
+
 .dashboard-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
+  margin-top: 0.8rem;
+  margin-bottom: 0.1rem;
 }
 
 .dashboard-section-title {
   color: #1a1a1a;
-  font-size: 1.2rem;      /* یه‌کم کوچیک‌تر از سلام (1.5rem) */
+  font-size: 0.7rem;
   font-weight: 700;
   margin: 0;
 }
@@ -670,9 +623,9 @@ button {
   background: none;
   border: none;
   padding: 0;
-  color: #1e3a8a;         /* آبی سورمه‌ای هماهنگ با کارت */
-  font-size: 0.85rem;     /* کوچیک‌تر از عنوان */
-  font-weight: 400;       /* بدون بولد */
+  color: #1e3a8a;
+  font-size: 0.75rem;
+  font-weight: 400;
   font-family: inherit;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -683,76 +636,878 @@ button {
   text-decoration: underline;
 }
 
-/* ===== لیست نیازمند توجه ===== */
-.dashboard-attention-list {
+/* =========================================================
+   12. داشبورد — پنل نیازمند توجه (دیو کلی)
+   ========================================================= */
+
+.dashboard-attention-panel {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 0.6rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 0.6rem;
+  gap: 0.5rem;
   box-shadow: 0 2px 10px rgba(30, 58, 138, 0.08);
 }
 
-.dashboard-attention-item {
-  background: #f9fafb;
-  border: 1px solid #ffffff;
-  border-radius: 12px;
-  padding: 0.75rem 0.85rem;
+/* سطر نزدیک‌ترین مهلت */
+.dashboard-deadline-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  text-align: right;
+  gap: 0.6rem;
+  padding: 0.4rem 0.3rem;
 }
 
-/* آیکون سمت راست — کادر مربع آبی کم‌رنگ */
-.dashboard-attention-icon-box {
-  background: #dbeafe;           /* آبی کم‌رنگ */
-  color: #1e3a8a;                /* آیکون آبی پررنگ */
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+.dashboard-deadline-icon-box {
+  background: #dbeafe;
+  color: #1e3a8a;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-/* متن وسط — فونت H3 */
-.dashboard-attention-title {
+.dashboard-deadline-icon-box svg {
+  width: 15px;
+  height: 15px;
+}
+
+.dashboard-deadline-title {
   color: #1a1a1a;
-  font-size: 1rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  margin: 0;
   flex: 1;
+}
+
+.dashboard-deadline-arrow {
+  color: #9ca3af;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+/* دیو ابلاغیه (بنفش کم‌رنگ) */
+.dashboard-notice-box {
+  background: #ede9fe;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+}
+
+.dashboard-notice-text {
+  color: #5b21b6;
+  font-size: 0.6rem;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* دیو یادداشت (آبی کم‌رنگ) */
+.dashboard-note-box {
+  background: #dbeafe;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dashboard-note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dashboard-note-time {
+  color: #929294;
+  font-size: 0.5rem;
+  font-weight: 500;
+}
+
+.dashboard-note-badge {
+  background: #93c5fd;
+  color: #1e3a8a;
+  font-size: 0.5rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.dashboard-note-title {
+  color: #1a1a1a;
+  font-size: 0.6rem;
+  font-weight: 700;
+  margin: 0;
   line-height: 1.5;
 }
 
-/* بج فوری — صورتی مایل به گلبهی، متن قرمز */
-.dashboard-attention-badge {
-  background: #fee2e2;           /* صورتی/گلبهی کم‌رنگ */
-  color: #dc2626;                /* قرمز */
-  font-size: 0.75rem;
+.dashboard-note-body {
+  color: #1f2937;
+  font-size: 0.5rem;
+  margin: 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   14. مودال افزودن یادداشت
+   ========================================================= */
+
+.note-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.note-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.2rem;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.note-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.note-modal-title {
+  color: #1a1a1a;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
+  margin: 0;
+}
+
+.note-modal-close {
+  background: #ede9fe;
+  color: #4b5563;
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
   flex-shrink: 0;
 }
 
-/* فلش سمت چپ کارت دوم */
-.dashboard-attention-arrow {
-  color: #9ca3af;                /* خاکستری ملایم */
-  flex-shrink: 0;
+.note-modal-close:hover {
+  background: #ddd6fe;
 }
 
-/* بج جدید — آبی کم‌رنگ، متن آبی پررنگ */
-.dashboard-fresh-badge {
+.note-modal-hint {
+  color: #4b5563;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  margin: 0 0 0.3rem;
+}
+
+.note-modal-label {
+  color: #1a1a1a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 0.3rem;
+}
+
+.note-modal-input {
+  width: 100%;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.note-modal-input:focus {
+  border-color: #a78bfa;
+}
+
+.note-modal-input::placeholder {
+  color: #8b5cf6;
+  opacity: 0.7;
+}
+
+.note-modal-textarea {
+  width: 100%;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: #1a1a1a;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s ease;
+}
+
+.note-modal-textarea:focus {
+  border-color: #a78bfa;
+}
+
+.note-modal-textarea::placeholder {
+  color: #8b5cf6;
+  opacity: 0.7;
+}
+
+.note-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.note-modal-save,
+.note-modal-cancel {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.note-modal-save {
+  background: #ffffff;
+  color: #1e3a8a;
+  border: 1.5px solid #1e3a8a;
+}
+
+.note-modal-save:hover {
+  background: #1e3a8a;
+  color: #ffffff;
+}
+
+.note-modal-cancel {
+  background: #ffffff;
+  color: #4b5563;
+  border: 1.5px solid #d1d5db;
+}
+
+.note-modal-cancel:hover {
+  background: #1e3a8a;
+  color: #ffffff;
+  border-color: #1e3a8a;
+}
+
+/* =========================================================
+   15. فوتر پایین (BottomNav)
+   ========================================================= */
+
+.bottom-nav {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  padding: 0.4rem 0.25rem;
+  gap: 0.25rem;
+  box-shadow: 0 -2px 10px rgba(30, 58, 138, 0.05);
+  margin-top: auto;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #6b7280;
+  font-family: inherit;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bottom-nav-item .bottom-nav-icon,
+.bottom-nav-item .bottom-nav-label {
+  color: inherit;
+}
+
+.bottom-nav-item .bottom-nav-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.bottom-nav-item.active {
   background: #dbeafe;
   color: #1e3a8a;
-  font-size: 0.75rem;
+}
+
+.bottom-nav-item:hover:not(.active) {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* =========================================================
+   16. صفحه بارگذاری سند جدید (Upload)
+   ========================================================= */
+
+.upload-card {
+  gap: 1.2rem;
+}
+
+.upload-page-title {
+  color: #1e3a8a;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
+  margin: 0 0 0.5rem;
+}
+
+.upload-dropzone {
+  background: #dbeafe;
+  border: 2px dashed #93c5fd;
+  border-radius: 16px;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  text-align: center;
+  min-height: 180px;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone:focus-visible {
+  background: #bfdbfe;
+  border-color: #60a5fa;
+  outline: none;
+}
+
+.upload-dropzone-icon {
+  color: #1e3a8a;
   flex-shrink: 0;
+}
+
+.upload-dropzone-text {
+  color: #1a1a1a;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.upload-dropzone-hint {
+  color: #6b7280;
+  font-size: 0.6rem;
+  margin: 0;
+}
+
+.upload-files-title {
+  color: #1a1a1a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0;
+}
+
+.upload-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.upload-file-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+.upload-file-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.upload-file-status {
+  color: #2563eb;
+  font-size: 0.65rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.upload-file-error {
+  background: #dc2626;
+  color: #ffffff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.upload-file-error-text {
+  color: #dc2626;
+  font-size: 0.7rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.upload-file-ocr {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  margin-top: 0.2rem;
+}
+
+.upload-file-ocr-title {
+  color: #1e3a8a;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+
+.upload-file-ocr-text {
+  color: #1f2937;
+  font-size: 0.7rem;
+  line-height: 1.7;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   17. Media Query — موبایل (max-width: 520px)
+   ⚠️ همیشه آخر فایل باشه تا استایل‌های دسکتاپ رو override کنه
+   ========================================================= */
+
+@media (max-width: 520px) {
+  /* ===== فریم اصلی ===== */
+  .app-frame {
+    width: 100%;
+    min-height: 100dvh;
+    border-radius: 0;
+    padding-top: max(env(safe-area-inset-top, 0px), 15px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 10px);
+  }
+
+  .auth-shell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+
+  .auth-card {
+    
+    border-radius: 14px;
+    gap: 0.9rem;
+    margin-top: -50px;
+    margin-right: -50px;
+  }
+
+  /* ===== فونت‌های پایه ===== */
+  
+
+  .auth-description {
+    font-size: 0.7rem;
+    line-height: 1.7;
+  }
+
+  .identity-name-grid {
+    gap: 8px;
+  }
+
+  /* ===== فرم‌ها ===== */
+  .auth-form {
+    gap: 0.7rem;
+  }
+
+  .auth-form input,
+  .auth-form select {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .auth-form label {
+    font-size: 0.7rem;
+  }
+
+  .auth-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    border-radius: 10px;
+  }
+
+  /* ===== هدر ===== */
+  .app-header {
+    padding: 0.7rem 0.9rem;
+  }
+
+  .brand span {
+    font-size: 0.7rem;
+  }
+
+  .judiciary-mark svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ===== داشبورد — سلام و تاریخ ===== */
+  .dashboard-greeting {
+    gap: 0.3rem;
+  }
+
+  .dashboard-hello {
+    font-size: 0.7rem;
+  }
+
+  .dashboard-date {
+    font-size: 0.5rem;
+    padding-top: 5px;
+  }
+
+  /* ===== کارت آبی ===== */
+  .dashboard-upload-panel {
+    padding: 1rem 0.9rem;
+    border-radius: 12px;
+    gap: 0.7rem;
+  }
+
+  .dashboard-upload-title {
+    font-size: 0.6rem;
+  }
+
+  .dashboard-upload-description {
+    font-size: 0.5rem;
+    line-height: 1.7;
+  }
+
+  .dashboard-upload-button {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.5rem;
+    border-radius: 9px;
+    gap: 0.4rem;
+  }
+
+  .dashboard-upload-button svg {
+    width: 15px;
+    height: 18px;
+  }
+
+  /* ===== سه کارت سفید ===== */
+  .dashboard-quick-actions {
+    gap: 0.3rem;
+  }
+
+  .dashboard-action-card {
+    min-height: 40px;
+    padding: 0.35rem 0.25rem;
+    border-radius: 9px;
+    gap: 0.25rem;
+  }
+
+  .dashboard-action-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .dashboard-action-label {
+    font-size: 0.4rem;
+  }
+
+  /* ===== هدر بخش‌ها ===== */
+  .dashboard-section-header {
+    margin-top: 0.5rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .dashboard-section-title {
+    font-size: 0.5rem;
+  }
+
+  .dashboard-section-link {
+    font-size: 0.4rem;
+  }
+
+  /* ===== پنل نیازمند توجه ===== */
+  .dashboard-attention-panel {
+    padding: 0.45rem;
+    border-radius: 12px;
+    gap: 0.4rem;
+  }
+
+  .dashboard-deadline-row {
+    gap: 0.5rem;
+    padding: 0.3rem 0.2rem;
+  }
+
+  .dashboard-deadline-icon-box {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+  }
+
+  .dashboard-deadline-icon-box svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .dashboard-deadline-title {
+    font-size: 0.5rem;
+  }
+
+  .dashboard-deadline-arrow {
+    width: 14px;
+    height: 14px;
+  }
+
+  .dashboard-notice-box {
+    padding: 0.5rem 0.6rem;
+    border-radius: 9px;
+  }
+
+  .dashboard-notice-text {
+    font-size: 0.5rem;
+  }
+
+  .dashboard-note-box {
+    padding: 0.5rem 0.6rem;
+    border-radius: 9px;
+    gap: 0.3rem;
+  }
+
+  .dashboard-note-time {
+    font-size: 0.5rem;
+  }
+
+  .dashboard-note-badge {
+    font-size: 0.4rem;
+    padding: 0.12rem 0.45rem;
+  }
+
+  .dashboard-note-title {
+    font-size: 0.5rem;
+  }
+
+  .dashboard-note-body {
+    font-size: 0.5rem;
+  }
+
+  
+  /* ===== مودال یادداشت ===== */
+  .note-modal {
+    padding: 1rem;
+    border-radius: 14px;
+    gap: 0.5rem;
+  }
+
+  .note-modal-title {
+    font-size: 0.92rem;
+  }
+
+  .note-modal-hint {
+    font-size: 0.72rem;
+  }
+
+  .note-modal-label {
+    font-size: 0.75rem;
+  }
+
+  .note-modal-input,
+  .note-modal-textarea {
+    font-size: 0.75rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .note-modal-save,
+  .note-modal-cancel {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  /* ===== فوتر جدید ===== */
+  .bottom-nav {
+    padding: 0.3rem 0.15rem;
+    gap: 0.15rem;
+  }
+
+  .bottom-nav-item {
+    padding: 0.35rem 0.15rem;
+    gap: 0.15rem;
+    border-radius: 8px;
+  }
+
+  .bottom-nav-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.58rem;
+  }
+
+  /* ===== فوتر امنیت ===== */
+  .security-footer {
+    font-size: 0.7rem;
+    padding: 0.4rem 0;
+  }
+
+  .security-footer svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* ===== کد تأیید ===== */
+  .verification-inputs {
+    gap: 0.3rem;
+  }
+
+  .verification-inputs input {
+    width: 34px;
+    height: 42px;
+    font-size: 0.95rem;
+  }
+
+  .verification-countdown,
+  .resend-button {
+    font-size: 0.7rem;
+  }
+
+  /* ===== کارت تکمیل ثبت‌نام ===== */
+  .completion-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+  }
+
+  /* ===== صفحه بارگذاری سند ===== */
+  .upload-card {
+    gap: 0.9rem;
+  }
+
+  .upload-page-title {
+    font-size: 0.85rem;
+  }
+
+  .upload-dropzone {
+    padding: 1.5rem 0.75rem;
+    min-height: 140px;
+    border-radius: 14px;
+    gap: 0.45rem;
+  }
+
+  .upload-dropzone-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .upload-dropzone-text {
+    font-size: 0.7rem;
+  }
+
+  .upload-dropzone-hint {
+    font-size: 0.58rem;
+  }
+
+  .upload-files-title {
+    font-size: 0.7rem;
+  }
+
+  .upload-file-item {
+    padding: 0.5rem 0.6rem;
+    gap: 0.5rem;
+    border-radius: 9px;
+  }
+
+  .upload-file-icon-box {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+  }
+
+  .upload-file-icon-box svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .upload-file-name {
+    font-size: 0.6rem;
+  }
+
+  .upload-file-check {
+    width: 18px;
+    height: 18px;
+  }
+
+  .upload-analyze-button {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.7rem;
+    border-radius: 10px;
+  }
+
+    .upload-file-status {
+    font-size: 0.58rem;
+  }
+
+  .upload-file-error {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+  }
+
+  .upload-file-error-text {
+    font-size: 0.6rem;
+  }
+
+  .upload-file-ocr {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .upload-file-ocr-title {
+    font-size: 0.62rem;
+  }
+
+  .upload-file-ocr-text {
+    font-size: 0.6rem;
+    max-height: 150px;
+  }
 }

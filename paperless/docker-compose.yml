@@ -1,4 +1,3 @@
-
 services:
   broker:
     image: docker.io/library/redis:8
@@ -12,7 +11,7 @@ services:
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
-      POSTGRES_PASSWORD: ${PAPERLESS_DB_PASSWORD}
+      POSTGRES_PASSWORD: "Rad8110200881"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -31,9 +30,13 @@ services:
       PAPERLESS_DBHOST: db
       PAPERLESS_DBNAME: paperless
       PAPERLESS_DBUSER: paperless
-      PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD}
+      PAPERLESS_DBPASS: "Rad8110200881"
       PAPERLESS_TIME_ZONE: Asia/Tehran
-      PAPERLESS_OCR_LANGUAGE: eng
+      PAPERLESS_OCR_LANGUAGE: "fas"
+      PAPERLESS_OCR_LANGUAGES: "fas"
+      PAPERLESS_OCR_CLEAN: "none"
+      PAPERLESS_WORKER_TIMEOUT: 3600
+      PAPERLESS_TASK_WORKERS: 1
       PAPERLESS_URL: http://localhost:8000
     volumes:
       - data:/usr/src/paperless/data
@@ -41,8 +44,11 @@ services:
       - ./consume:/usr/src/paperless/consume
       - ./export:/usr/src/paperless/export
 
+  
+
 volumes:
   redisdata:
   pgdata:
   data:
   media:
+  

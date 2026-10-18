@@ -1,0 +1,79 @@
+services:
+  broker:
+    image: docker.io/library/redis:8
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  db:
+    image: docker.io/library/postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: "Rad8110200881"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: "Rad8110200881"
+      PAPERLESS_TIME_ZONE: Asia/Tehran
+      PAPERLESS_OCR_LANGUAGE: "fas"
+      PAPERLESS_OCR_LANGUAGES: "fas"
+      PAPERLESS_WORKER_TIMEOUT: 3600
+      PAPERLESS_TASK_WORKERS: 1
+      PAPERLESS_URL: http://localhost:8000
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ./consume:/usr/src/paperless/consume
+      - ./export:/usr/src/paperless/export
+
+  # سرویس worker جدید برای پردازش موازی
+  worker:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+    env_file:
+      - .env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: ${PAPERLESS_DB_PASSWORD}
+      PAPERLESS_TIME_ZONE: Asia/Tehran
+      PAPERLESS_OCR_LANGUAGE: fas
+      PAPERLESS_OCR_LANGUAGES: fas
+      PAPERLESS_WORKER_TIMEOUT: 3600
+      PAPERLESS_TASK_WORKERS: 1
+      PAPERLESS_URL: http://localhost:8000
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ./consume:/usr/src/paperless/consume
+      - ./export:/usr/src/paperless/export
+    command: ["/usr/local/bin/paperless_celery", "worker"]
+
+volumes:
+  redisdata:
+  pgdata:
+  data:
+  media:
+  

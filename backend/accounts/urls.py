@@ -1,4 +1,3 @@
-
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
@@ -13,6 +12,7 @@ from .views import (
     upload_to_paperless,
     paperless_task_status,
     paperless_search,
+    paperless_get_document,
 )
 
 
@@ -70,6 +70,11 @@ urlpatterns = [
         "paperless/search/",
         paperless_search,
         name="paperless-search",
+    ),
+    path(
+        "paperless/document/<int:document_id>/",
+        paperless_get_document,
+        name="paperless-document",
     ),
 
     # مسیرهای خودکار ViewSet

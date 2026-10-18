@@ -1,6 +1,9 @@
 import hashlib
 import secrets
 import os
+import json
+import requests
+from django.conf import settings
 from datetime import timedelta
 
 from django.contrib.auth.hashers import check_password, make_password
@@ -20,21 +23,15 @@ from .models import (
 )
 from .serializers import UserProfileSerializer, LegalCaseSerializer
 
-
 from django.core.files.storage import default_storage
 from .paperless_service import upload_document, get_task_status, search_documents
+
 
 # =========================================================
 # توابع کمکی
 # =========================================================
 
 def validate_mobile(mobile):
-    """
-    بررسی شماره موبایل ایران
-    مثال صحیح:
-    09123456789
-    """
-
     return (
         isinstance(mobile, str)
         and len(mobile) == 11
@@ -44,53 +41,32 @@ def validate_mobile(mobile):
 
 
 def hash_token(token):
-    """
-    تبدیل Token به SHA256
-    """
     return hashlib.sha256(token.encode()).hexdigest()
 
 
 def get_session(request):
-    """
-    گرفتن Session از Header:
-
-    Authorization: Bearer TOKEN
-    """
-
     auth_header = request.headers.get("Authorization", "")
-
     if not auth_header.startswith("Bearer "):
         return None
-
     token = auth_header.replace("Bearer ", "").strip()
-
     if not token:
         return None
-
     token_hash = hash_token(token)
-
     session = AuthSession.objects.filter(
         token_hash=token_hash,
         expires_at__gt=timezone.now()
     ).first()
-
     return session
 
 
 def create_session(mobile, mode):
-    """
-    ساخت Token جدید برای کاربر
-    """
-
     token = secrets.token_hex(32)
-
     AuthSession.objects.create(
         token_hash=hash_token(token),
         mobile=mobile,
         mode=mode,
         expires_at=timezone.now() + timedelta(hours=24),
     )
-
     return token
 
 
@@ -99,9 +75,7 @@ def create_session(mobile, mode):
 # =========================================================
 
 class UserProfileViewSet(viewsets.ModelViewSet):
-
     queryset = UserProfile.objects.all()
-
     serializer_class = UserProfileSerializer
 
 
@@ -110,9 +84,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 # =========================================================
 
 class LegalCaseViewSet(viewsets.ModelViewSet):
-
     queryset = LegalCase.objects.all()
-
     serializer_class = LegalCaseSerializer
 
 
@@ -122,112 +94,54 @@ class LegalCaseViewSet(viewsets.ModelViewSet):
 
 @api_view(["POST"])
 def send_code(request):
-
     mobile = request.data.get("mobile")
     mode = request.data.get("mode")
 
-    # بررسی موبایل
     if not validate_mobile(mobile):
-
         return Response(
-            {
-                "message": "شماره موبایل معتبر نیست."
-            },
+            {"message": "شماره موبایل معتبر نیست."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # mode باید signup یا login باشد
     if mode not in ["signup", "login"]:
-
         return Response(
-            {
-                "message": "حالت ورود نامعتبر است."
-            },
+            {"message": "حالت ورود نامعتبر است."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # بررسی وجود کاربر
-    user = UserProfile.objects.filter(
-        mobile=mobile
-    ).first()
+    user = UserProfile.objects.filter(mobile=mobile).first()
 
-    # اگر ثبت نام است، کاربر نباید قبلاً وجود داشته باشد
     if mode == "signup" and user:
-
         return Response(
-            {
-                "message": "این شماره موبایل قبلاً ثبت نام کرده است."
-            },
+            {"message": "این شماره موبایل قبلاً ثبت نام کرده است."},
             status=status.HTTP_409_CONFLICT
         )
 
-    # اگر login است، کاربر باید وجود داشته باشد
     if mode == "login" and not user:
-
         return Response(
-            {
-                "message": "کاربری با این شماره موبایل پیدا نشد."
-            },
+            {"message": "کاربری با این شماره موبایل پیدا نشد."},
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # =====================================================
-    # جلوگیری از ارسال کد بیشتر از هر 3 دقیقه
-    # =====================================================
-
-    rate_limit = VerificationRateLimit.objects.filter(
-        mobile=mobile
-    ).first()
-
+    rate_limit = VerificationRateLimit.objects.filter(mobile=mobile).first()
     if rate_limit:
-
         elapsed = timezone.now() - rate_limit.sent_at
-
         if elapsed.total_seconds() < 180:
-
             remaining = 180 - int(elapsed.total_seconds())
-
             return Response(
-                {
-                    "message": "لطفاً کمی صبر کنید.",
-                    "remaining": remaining
-                },
+                {"message": "لطفاً کمی صبر کنید.", "remaining": remaining},
                 status=status.HTTP_429_TOO_MANY_REQUESTS
             )
 
-    # =====================================================
-    # تولید کد 6 رقمی
-    # =====================================================
-
     code = str(secrets.randbelow(900000) + 100000)
+    code_hash = hashlib.sha256(code.encode()).hexdigest()
 
-    code_hash = hashlib.sha256(
-        code.encode()
-    ).hexdigest()
-
-    # حذف کدهای قبلی
-    VerificationCode.objects.filter(
-        mobile=mobile
-    ).delete()
-
-    # ذخیره کد جدید
-    VerificationCode.objects.create(
-        mobile=mobile,
-        code_hash=code_hash
-    )
-
-    # ثبت زمان ارسال
+    VerificationCode.objects.filter(mobile=mobile).delete()
+    VerificationCode.objects.create(mobile=mobile, code_hash=code_hash)
     VerificationRateLimit.objects.update_or_create(
         mobile=mobile,
-        defaults={
-            "sent_at": timezone.now()
-        }
+        defaults={"sent_at": timezone.now()}
     )
-
-    # =====================================================
-    # فعلاً SMS واقعی نداریم
-    # کد در Terminal چاپ می‌شود
-    # =====================================================
 
     print("")
     print("=" * 50)
@@ -238,9 +152,7 @@ def send_code(request):
     print("")
 
     return Response(
-        {
-            "message": "کد تأیید ارسال شد."
-        },
+        {"message": "کد تأیید ارسال شد."},
         status=status.HTTP_200_OK
     )
 
@@ -251,80 +163,46 @@ def send_code(request):
 
 @api_view(["POST"])
 def verify_code(request):
-
     mobile = request.data.get("mobile")
     code = request.data.get("code")
     mode = request.data.get("mode")
 
     if not validate_mobile(mobile):
-
         return Response(
-            {
-                "message": "شماره موبایل معتبر نیست."
-            },
+            {"message": "شماره موبایل معتبر نیست."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
     if not code or len(str(code)) != 6:
-
         return Response(
-            {
-                "message": "کد تأیید باید 6 رقمی باشد."
-            },
+            {"message": "کد تأیید باید 6 رقمی باشد."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # پیدا کردن کد
-    verification = VerificationCode.objects.filter(
-        mobile=mobile
-    ).first()
-
+    verification = VerificationCode.objects.filter(mobile=mobile).first()
     if not verification:
-
         return Response(
-            {
-                "message": "کد تأیید پیدا نشد یا منقضی شده است."
-            },
+            {"message": "کد تأیید پیدا نشد یا منقضی شده است."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # بررسی زمان
     elapsed = timezone.now() - verification.created_at
-
     if elapsed.total_seconds() > 180:
-
         verification.delete()
-
         return Response(
-            {
-                "message": "کد تأیید منقضی شده است."
-            },
+            {"message": "کد تأیید منقضی شده است."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Hash کردن کد وارد شده
-    submitted_hash = hashlib.sha256(
-        str(code).encode()
-    ).hexdigest()
-
-    # مقایسه
+    submitted_hash = hashlib.sha256(str(code).encode()).hexdigest()
     if submitted_hash != verification.code_hash:
-
         return Response(
-            {
-                "message": "کد تأیید اشتباه است."
-            },
+            {"message": "کد تأیید اشتباه است."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # کد یکبار مصرف است
     verification.delete()
-
-    # ساخت Session
-    token = create_session(
-        mobile,
-        mode
-    )
+    token = create_session(mobile, mode)
 
     return Response(
         {
@@ -342,68 +220,41 @@ def verify_code(request):
 
 @api_view(["POST"])
 def login(request):
-
     mobile = request.data.get("mobile")
     password = request.data.get("password")
 
     if not validate_mobile(mobile):
-
         return Response(
-            {
-                "message": "شماره موبایل معتبر نیست."
-            },
+            {"message": "شماره موبایل معتبر نیست."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
     if not password:
-
         return Response(
-            {
-                "message": "رمز عبور را وارد کنید."
-            },
+            {"message": "رمز عبور را وارد کنید."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = UserProfile.objects.filter(
-        mobile=mobile
-    ).first()
-
+    user = UserProfile.objects.filter(mobile=mobile).first()
     if not user:
-
         return Response(
-            {
-                "message": "کاربر پیدا نشد."
-            },
+            {"message": "کاربر پیدا نشد."},
             status=status.HTTP_404_NOT_FOUND
         )
 
-    # بررسی رمز
     if not user.password_hash:
-
         return Response(
-            {
-                "message": "برای این حساب رمز عبور ثبت نشده است."
-            },
+            {"message": "برای این حساب رمز عبور ثبت نشده است."},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    if not check_password(
-        password,
-        user.password_hash
-    ):
-
+    if not check_password(password, user.password_hash):
         return Response(
-            {
-                "message": "شماره موبایل یا رمز عبور اشتباه است."
-            },
+            {"message": "شماره موبایل یا رمز عبور اشتباه است."},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    # ساخت Token
-    token = create_session(
-        mobile,
-        "login"
-    )
+    token = create_session(mobile, "login")
 
     return Response(
         {
@@ -431,38 +282,23 @@ def login(request):
 
 @api_view(["GET"])
 def get_patient(request, mobile):
-
     session = get_session(request)
-
     if not session:
-
         return Response(
-            {
-                "message": "دسترسی غیرمجاز."
-            },
+            {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    # کاربر فقط اطلاعات خودش را می‌تواند ببیند
     if session.mobile != mobile:
-
         return Response(
-            {
-                "message": "دسترسی غیرمجاز."
-            },
+            {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_403_FORBIDDEN
         )
 
-    user = UserProfile.objects.filter(
-        mobile=mobile
-    ).first()
-
+    user = UserProfile.objects.filter(mobile=mobile).first()
     if not user:
-
         return Response(
-            {
-                "message": "کاربر پیدا نشد."
-            },
+            {"message": "کاربر پیدا نشد."},
             status=status.HTTP_404_NOT_FOUND
         )
 
@@ -490,27 +326,17 @@ def get_patient(request, mobile):
 
 @api_view(["POST"])
 def save_patient(request):
-
     session = get_session(request)
-
     if not session:
-
         return Response(
-            {
-                "message": "دسترسی غیرمجاز."
-            },
+            {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
     mobile = request.data.get("mobile")
-
-    # موبایل باید با Token یکی باشد
     if session.mobile != mobile:
-
         return Response(
-            {
-                "message": "دسترسی غیرمجاز."
-            },
+            {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_403_FORBIDDEN
         )
 
@@ -522,52 +348,23 @@ def save_patient(request):
     weight = request.data.get("weight")
     password = request.data.get("password")
 
-    # -----------------------------
-    # diseases
-    # -----------------------------
-
     diseases = request.data.get("diseases", [])
-
     if isinstance(diseases, str):
-
-        import json
-
         try:
             diseases = json.loads(diseases)
         except Exception:
             diseases = []
 
-    # -----------------------------
-    # diseaseDetails
-    # -----------------------------
-
-    disease_details = request.data.get(
-        "diseaseDetails",
-        {}
-    )
-
+    disease_details = request.data.get("diseaseDetails", {})
     if isinstance(disease_details, str):
-
-        import json
-
         try:
-            disease_details = json.loads(
-                disease_details
-            )
+            disease_details = json.loads(disease_details)
         except Exception:
             disease_details = {}
 
-    # -----------------------------
-    # پیدا کردن کاربر
-    # -----------------------------
+    user = UserProfile.objects.filter(mobile=mobile).first()
 
-    user = UserProfile.objects.filter(
-        mobile=mobile
-    ).first()
-
-    # اگر signup است، کاربر جدید ساخته می‌شود
     if not user:
-
         user = UserProfile(
             mobile=mobile,
             full_name=name or "",
@@ -579,9 +376,7 @@ def save_patient(request):
             diseases=diseases,
             disease_details=disease_details,
         )
-
     else:
-
         user.full_name = name or user.full_name
         user.national_id = national_id
         user.age = age
@@ -591,29 +386,18 @@ def save_patient(request):
         user.diseases = diseases
         user.disease_details = disease_details
 
-    # -----------------------------
-    # ذخیره رمز عبور
-    # -----------------------------
-
     if password:
-
         if len(password) < 8:
-
             return Response(
-                {
-                    "message": "رمز عبور باید حداقل 8 کاراکتر باشد."
-                },
+                {"message": "رمز عبور باید حداقل 8 کاراکتر باشد."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        user.password_hash = make_password(
-            password
-        )
+        user.password_hash = make_password(password)
 
     user.save()
- 
+
     return Response(
-       {
+        {
             "message": "اطلاعات با موفقیت ذخیره شد.",
             "patient": {
                 "id": user.id,
@@ -632,69 +416,48 @@ def save_patient(request):
     )
 
 
+# =========================================================
+# آپلود سند به Paperless
+# =========================================================
 
 @api_view(["POST"])
 def upload_to_paperless(request):
-    """
-    آپلود سند از فرانت‌اند به Paperless از طریق بک‌اند
-    """
-
-    # بررسی احراز هویت کاربر
     session = get_session(request)
-
     if not session:
         return Response(
             {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    # دریافت فایل از فرانت‌اند
     file = request.FILES.get("document")
-
     if not file:
         return Response(
             {"message": "فایلی ارسال نشده است."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # بررسی فرمت مجاز فایل
-    allowed_extensions = {
-        ".jpg", ".jpeg", ".png", ".webp", ".pdf"
-    }
-
+    allowed_extensions = {".jpg", ".jpeg", ".png", ".webp", ".pdf"}
     extension = os.path.splitext(file.name)[1].lower()
-
     if extension not in allowed_extensions:
         return Response(
             {"message": "فرمت فایل مجاز نیست."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # بررسی حجم فایل: حداکثر 10 مگابایت
     if file.size == 0 or file.size > 10 * 1024 * 1024:
         return Response(
-            {
-                "message":
-                "حجم فایل باید بیشتر از صفر و حداکثر ۱۰ مگابایت باشد."
-            },
+            {"message": "حجم فایل باید بیشتر از صفر و حداکثر ۱۰ مگابایت باشد."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # ذخیره موقت فایل
-    file_path = default_storage.save(
-        f"temp/{file.name}",
-        file
-    )
-
+    file_path = default_storage.save(f"temp/{file.name}", file)
     full_path = default_storage.path(file_path)
 
     try:
-        # ارسال فایل به Paperless
         result = upload_document(
             full_path,
             title=request.data.get("title", file.name)
         )
-
         if result.get("success"):
             return Response(
                 {
@@ -703,7 +466,6 @@ def upload_to_paperless(request):
                 },
                 status=status.HTTP_200_OK
             )
-
         return Response(
             {
                 "message": "خطا در آپلود سند.",
@@ -711,25 +473,24 @@ def upload_to_paperless(request):
             },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
     finally:
-        # حذف فایل موقت پس از پایان درخواست
         if os.path.exists(full_path):
             os.remove(full_path)
 
 
+# =========================================================
+# وضعیت تسک Paperless
+# =========================================================
+
 @api_view(["GET"])
 def paperless_task_status(request, task_id):
-    """
-    بررسی وضعیت پردازش سند در Paperless
-    """
     session = get_session(request)
     if not session:
         return Response(
             {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_401_UNAUTHORIZED
         )
-    
+
     task_data = get_task_status(task_id)
     if task_data:
         return Response(task_data, status=status.HTTP_200_OK)
@@ -738,25 +499,27 @@ def paperless_task_status(request, task_id):
         status=status.HTTP_404_NOT_FOUND
     )
 
+
+# =========================================================
+# جستجو در اسناد Paperless
+# =========================================================
+
 @api_view(["GET"])
 def paperless_search(request):
-    """
-    جستجو در اسناد Paperless
-    """
     session = get_session(request)
     if not session:
         return Response(
             {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_401_UNAUTHORIZED
         )
-    
+
     query = request.query_params.get('q', '')
     if not query:
         return Response(
             {"message": "عبارت جستجو ارسال نشده."},
             status=status.HTTP_400_BAD_REQUEST
         )
-    
+
     results = search_documents(query)
     if results:
         return Response(results, status=status.HTTP_200_OK)
@@ -764,3 +527,34 @@ def paperless_search(request):
         {"message": "خطا در جستجو."},
         status=status.HTTP_500_INTERNAL_SERVER_ERROR
     )
+
+
+# =========================================================
+# دریافت یک سند از Paperless
+# =========================================================
+
+@api_view(["GET"])
+def paperless_get_document(request, document_id):
+    session = get_session(request)
+    if not session:
+        return Response(
+            {"message": "دسترسی غیرمجاز."},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    try:
+        response = requests.get(
+            f"{settings.PAPERLESS_URL}/api/documents/{document_id}/",
+            headers={"Authorization": f"Token {settings.PAPERLESS_API_TOKEN}"},
+        )
+        if response.status_code == 200:
+            return Response(response.json(), status=status.HTTP_200_OK)
+        return Response(
+            {"message": "سند پیدا نشد."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {"message": f"خطا در دریافت سند: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
