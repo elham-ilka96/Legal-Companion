@@ -1511,3 +1511,41 @@ button {
     max-height: 150px;
   }
 }
+
+/* تنظیمات دکمه‌های مودال (افزودن، ویرایش و حذف) */
+.note-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.note-modal-save,
+.note-modal-cancel {
+  flex: 1; /* عرض برابر */
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+/* رنگ دکمه ذخیره (و ویرایش) */
+.note-modal-save {
+  background-color: #2563eb; /* رنگ آبی اصلی */
+  color: white;
+}
+.note-modal-save:hover {
+  background-color: #1d4ed8;
+}
+
+/* رنگ دکمه انصراف (و حذف) */
+.note-modal-cancel {
+  background-color: #c72121; /* رنگ خاکستری */
+  color: white;
+}
+.note-modal-cancel:hover {
+  background-color: #bd0f0f;
+}

@@ -20,8 +20,13 @@ from .models import (
     VerificationCode,
     AuthSession,
     VerificationRateLimit,
+    Note,
 )
-from .serializers import UserProfileSerializer, LegalCaseSerializer
+from .serializers import (
+    UserProfileSerializer,
+    LegalCaseSerializer,
+    NoteSerializer,  
+)
 
 from django.core.files.storage import default_storage
 from .paperless_service import upload_document, get_task_status, search_documents
@@ -78,6 +83,29 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
+
+# =========================================================
+# Note API (یادداشت‌ها)
+# =========================================================
+
+class NoteViewSet(viewsets.ModelViewSet):
+    serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        session = get_session(self.request)
+        if not session:
+            return Note.objects.none()
+        
+        user = UserProfile.objects.filter(mobile=session.mobile).first()
+        if not user:
+            return Note.objects.none()
+        
+        return Note.objects.filter(user=user).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        session = get_session(self.request)
+        user = UserProfile.objects.filter(mobile=session.mobile).first()
+        serializer.save(user=user)
 
 # =========================================================
 # LegalCase API

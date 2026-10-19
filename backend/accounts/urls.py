@@ -13,6 +13,7 @@ from .views import (
     paperless_task_status,
     paperless_search,
     paperless_get_document,
+    NoteViewSet,
 )
 
 
@@ -32,6 +33,12 @@ router.register(
     LegalCaseViewSet
 )
 
+
+router.register(
+    r"notes",
+    NoteViewSet,
+    basename="note"
+)  
 
 # =========================================================
 # تمام مسیرهای API پروژه

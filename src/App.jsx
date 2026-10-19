@@ -157,10 +157,13 @@ function App() {
   // یادداشت‌ها
   // =========================
   const [notes, setNotes] = useState(() => readStored("notes", []));
-  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false); // برای افزودن/ویرایش
   const [noteTitle, setNoteTitle] = useState("");
   const [noteBody, setNoteBody] = useState("");
-  const [editingNoteId, setEditingNoteId] = useState(null);
+  const [editingNoteId, setEditingNoteId] = useState(null); // برای تشخیص حالت ویرایش
+  const [selectedNote, setSelectedNote] = useState(null); // برای نمایش جزئیات
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // مودال جزئیات
+  
 
   const [resendSeconds, setResendSeconds] = useState(0);
   const verificationInputs = useRef([]);
@@ -288,7 +291,7 @@ function App() {
   const codeExpired = authScreen === "verify" && resendSeconds === 0;
 
   // =========================
-  // یادداشت‌ها
+  // یادداشت‌ها (منطق جدید)
   // =========================
   const handleSaveNote = () => {
     const trimmedTitle = noteTitle.trim();
@@ -298,24 +301,62 @@ function App() {
       return;
     }
 
-    const newNote = {
-      id: Date.now(),
-      title: trimmedTitle || "بدون موضوع",
-      body: trimmedBody,
-      time: getCurrentTimePersian(),
-      date: getCurrentPersianDate(),
-    };
+    if (editingNoteId) {
+      // حالت ویرایش
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.id === editingNoteId
+            ? { ...note, title: trimmedTitle || "بدون موضوع", body: trimmedBody }
+            : note
+        )
+      );
+    } else {
+      // حالت افزودن
+      const newNote = {
+        id: Date.now(),
+        title: trimmedTitle || "بدون موضوع",
+        body: trimmedBody,
+        time: getCurrentTimePersian(),
+        date: getCurrentPersianDate(),
+      };
+      setNotes((prev) => [newNote, ...prev]);
+    }
 
-    setNotes((prev) => [newNote, ...prev]);
+    // ریست کردن فرم
     setNoteTitle("");
     setNoteBody("");
+    setEditingNoteId(null);
     setIsNoteModalOpen(false);
   };
 
   const handleCancelNote = () => {
     setNoteTitle("");
     setNoteBody("");
+    setEditingNoteId(null);
     setIsNoteModalOpen(false);
+  };
+
+  const handleNoteClick = (note) => {
+    setSelectedNote(note);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleEditNote = () => {
+    if (!selectedNote) return;
+    setNoteTitle(selectedNote.title);
+    setNoteBody(selectedNote.body);
+    setEditingNoteId(selectedNote.id);
+    setIsDetailModalOpen(false);
+    setIsNoteModalOpen(true);
+  };
+
+  const handleDeleteNote = () => {
+    if (!selectedNote) return;
+    if (!window.confirm("آیا از حذف این یادداشت مطمئن هستید؟")) return;
+
+    setNotes((prev) => prev.filter((note) => note.id !== selectedNote.id));
+    setIsDetailModalOpen(false);
+    setSelectedNote(null);
   };
 
   // =========================
@@ -693,7 +734,7 @@ function App() {
       validFiles.push({
         id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
         file,
-        status: "ready",       // ready | uploading | processing | done | error
+        status: "ready",
         taskId: null,
         ocrText: "",
         error: "",
@@ -717,7 +758,7 @@ function App() {
   };
 
   const pollTask = async (fileItem) => {
-    const maxAttempts = 60;   // 60 × 3s = 3 دقیقه
+    const maxAttempts = 60;
     const interval = 3000;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -733,20 +774,19 @@ function App() {
 
         const data = await response.json();
 
-        // Paperless خروجی تسک‌ها رو به شکل لیست برمی‌گردونه
         const tasks = Array.isArray(data)
-  ? data
-  : Array.isArray(data?.results)
-    ? data.results
-    : data && typeof data === "object"
-      ? [data]
-      : [];
+          ? data
+          : Array.isArray(data?.results)
+            ? data.results
+            : data && typeof data === "object"
+              ? [data]
+              : [];
 
-const task =
-  tasks.find(
-    (item) =>
-      String(item.task_id ?? "") === String(fileItem.taskId)
-  ) ?? tasks[0];
+        const task =
+          tasks.find(
+            (item) =>
+              String(item.task_id ?? "") === String(fileItem.taskId)
+          ) ?? tasks[0];
 
         if (!task) continue;
 
@@ -755,11 +795,6 @@ const task =
         if (taskStatus === "success") {
           const docId =
             task.related_document_ids?.[0] ?? task.related_document;
-
-          
-            console.log("Paperless task:", task);
-             console.log("Document ID:", docId);
-
 
           if (docId) {
             const docResponse = await fetch(
@@ -808,7 +843,6 @@ const task =
 
     setUploadingFiles(true);
 
-    // همه فایل‌ها رو موازی می‌فرستیم
     await Promise.all(
       selectedFiles.map(async (item) => {
         if (item.status !== "ready") return;
@@ -844,7 +878,6 @@ const task =
             taskId: data.task_id,
           });
 
-          // شروع polling
           pollTask({ ...item, taskId: data.task_id });
         } catch (err) {
           console.error(err);
@@ -1547,11 +1580,19 @@ const task =
 
             <div
               className="dashboard-action-card"
-              onClick={() => setIsNoteModalOpen(true)}
+              onClick={() => {
+                setEditingNoteId(null);
+                setNoteTitle("");
+                setNoteBody("");
+                setIsNoteModalOpen(true);
+              }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
+                  setEditingNoteId(null);
+                  setNoteTitle("");
+                  setNoteBody("");
                   setIsNoteModalOpen(true);
                 }
               }}
@@ -1651,7 +1692,17 @@ const task =
             </div>
 
             {notes.map((note) => (
-              <div className="dashboard-note-box" key={note.id}>
+              <div
+                className="dashboard-note-box"
+                key={note.id}
+                onClick={() => handleNoteClick(note)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleNoteClick(note);
+                }}
+                style={{ cursor: "pointer" }}
+              >
                 <div className="dashboard-note-header">
                   <span className="dashboard-note-time">
                     امروز، ساعت {note.time}
@@ -1667,8 +1718,6 @@ const task =
 
           </div>
 
-          
-
           {shouldUseBottomNav() ? (
             <BottomNav active={dashboardTab} onChange={setDashboardTab} />
           ) : (
@@ -1678,7 +1727,7 @@ const task =
         </section>
       </main>
 
-      {/* مودال افزودن یادداشت */}
+      {/* مودال افزودن / ویرایش یادداشت */}
       {isNoteModalOpen && (
         <div
           className="note-modal-backdrop"
@@ -1694,7 +1743,7 @@ const task =
           >
             <div className="note-modal-header">
               <h2 id="note-modal-title" className="note-modal-title">
-                افزودن یادداشت
+                {editingNoteId ? "ویرایش یادداشت" : "افزودن یادداشت"}
               </h2>
               <button
                 type="button"
@@ -1753,7 +1802,7 @@ const task =
                 className="note-modal-save"
                 onClick={handleSaveNote}
               >
-                ذخیره یادداشت
+                {editingNoteId ? "ذخیره تغییرات" : "ذخیره یادداشت"}
               </button>
               <button
                 type="button"
@@ -1766,6 +1815,103 @@ const task =
           </div>
         </div>
       )}
+
+      {/* مودال مشاهده جزئیات یادداشت */}
+            {/* مودال مشاهده جزئیات یادداشت */}
+      {isDetailModalOpen && selectedNote && (
+        <div
+          className="note-modal-backdrop"
+          onClick={() => setIsDetailModalOpen(false)}
+          role="presentation"
+        >
+          <div
+            className="note-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="note-detail-title"
+          >
+            <div className="note-modal-header">
+              <h2 id="note-detail-title" className="note-modal-title">
+                جزئیات یادداشت
+              </h2>
+              <button
+                type="button"
+                className="note-modal-close"
+                onClick={() => setIsDetailModalOpen(false)}
+                aria-label="بستن"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="note-modal-hint">
+              این یادداشت در بخش «نیازمند توجه» نمایش داده شده است.
+            </p>
+
+            {/* نمایش موضوع */}
+            <label className="note-modal-label">
+              موضوع یادداشت
+            </label>
+            <input
+              type="text"
+              className="note-modal-input"
+              value={selectedNote.title}
+              readOnly
+            />
+
+            {/* نمایش متن */}
+            <label className="note-modal-label">
+              متن یادداشت
+            </label>
+            <textarea
+              className="note-modal-textarea"
+              value={selectedNote.body || "بدون متن"}
+              readOnly
+              rows={5}
+            />
+
+            {/* نمایش تاریخ */}
+            <div style={{ fontSize: "0.8rem", color: "#777", marginTop: "0.5rem", textAlign: "left", direction: "ltr" }}>
+              {selectedNote.date} - {selectedNote.time}
+            </div>
+
+            {/* دکمه‌ها */}
+            <div className="note-modal-actions" style={{ flexDirection: "row", gap: "10px", marginTop: "20px" }}>
+              <button
+                type="button"
+                className="note-modal-save"
+                onClick={handleEditNote}
+                style={{ flex: 1 }}
+              >
+                ویرایش یادداشت
+              </button>
+              <button
+                type="button"
+                className="note-modal-cancel"
+                onClick={handleDeleteNote}
+                style={{ flex: 1 }}
+              >
+                حذف یادداشت
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
     </AppFrame>
   );
