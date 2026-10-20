@@ -1,0 +1,50 @@
+.document-details-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.document-details-card {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e7eaf0;
+  border-radius: 14px;
+  background: #fff;
+  text-align: right;
+}
+
+.document-details-filename {
+  margin: 0 0 12px;
+  color: #263243;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.document-details-fields {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.document-details-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid #f0f2f5;
+}
+
+.document-details-field dt {
+  color: #7b8491;
+  font-size: 0.78rem;
+}
+
+.document-details-field dd {
+  margin: 0;
+  color: #263243;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}

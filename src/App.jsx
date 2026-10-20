@@ -3,6 +3,7 @@ import "./app.css";
 import userRoundKey from "./assets/user-round-key.svg";
 
 import BottomNav from "./components/BottomNav";
+import DocumentDetails from "./components/DocumentDetails";
 
 const readStored = (key, fallback) => {
   try {
@@ -64,6 +65,23 @@ const getCurrentTimePersian = () => {
   const hours = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
   return toPersianDigits(`${hours}:${minutes}`);
+};
+
+const getNoteTimestampLabel = (note) => {
+  const today = new Date();
+  const noteDate = note.createdAt ? new Date(note.createdAt) : null;
+  const isToday = noteDate
+    ? noteDate.toDateString() === today.toDateString()
+    : note.date?.split("، ").slice(-1)[0] ===
+      getCurrentPersianDate().split("، ").slice(-1)[0];
+  const time = String(note.time || "").replace(/^۰(?=[۰-۹]:)/, "");
+
+  if (isToday) {
+    return `امروز، ساعت ${time}`;
+  }
+
+  const date = String(note.date || "").split("، ").slice(-1)[0];
+  return `${date}، ساعت ${time}`;
 };
 
 function LockIcon({ className = "" }) {
@@ -163,7 +181,7 @@ function App() {
   const [editingNoteId, setEditingNoteId] = useState(null); // برای تشخیص حالت ویرایش
   const [selectedNote, setSelectedNote] = useState(null); // برای نمایش جزئیات
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // مودال جزئیات
-  
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const [resendSeconds, setResendSeconds] = useState(0);
   const verificationInputs = useRef([]);
@@ -310,6 +328,11 @@ function App() {
             : note
         )
       );
+      setSelectedNote((note) =>
+        note?.id === editingNoteId
+          ? { ...note, title: trimmedTitle || "بدون موضوع", body: trimmedBody }
+          : note
+      );
     } else {
       // حالت افزودن
       const newNote = {
@@ -318,6 +341,7 @@ function App() {
         body: trimmedBody,
         time: getCurrentTimePersian(),
         date: getCurrentPersianDate(),
+        createdAt: new Date().toISOString(),
       };
       setNotes((prev) => [newNote, ...prev]);
     }
@@ -327,6 +351,7 @@ function App() {
     setNoteBody("");
     setEditingNoteId(null);
     setIsNoteModalOpen(false);
+    setIsDetailModalOpen(false);
   };
 
   const handleCancelNote = () => {
@@ -334,28 +359,37 @@ function App() {
     setNoteBody("");
     setEditingNoteId(null);
     setIsNoteModalOpen(false);
+    setIsDetailModalOpen(false);
+    setIsDeleteConfirmOpen(false);
   };
 
   const handleNoteClick = (note) => {
     setSelectedNote(note);
+    setNoteTitle(note.title);
+    setNoteBody(note.body || "");
+    setEditingNoteId(note.id);
     setIsDetailModalOpen(true);
-  };
-
-  const handleEditNote = () => {
-    if (!selectedNote) return;
-    setNoteTitle(selectedNote.title);
-    setNoteBody(selectedNote.body);
-    setEditingNoteId(selectedNote.id);
-    setIsDetailModalOpen(false);
-    setIsNoteModalOpen(true);
   };
 
   const handleDeleteNote = () => {
     if (!selectedNote) return;
-    if (!window.confirm("آیا از حذف این یادداشت مطمئن هستید؟")) return;
+    setIsDetailModalOpen(false);
+    setIsDeleteConfirmOpen(true);
+  };
 
+  const cancelDeleteNote = () => {
+    setIsDeleteConfirmOpen(false);
+    setIsDetailModalOpen(true);
+  };
+
+  const confirmDeleteNote = () => {
+    if (!selectedNote) return;
     setNotes((prev) => prev.filter((note) => note.id !== selectedNote.id));
     setIsDetailModalOpen(false);
+    setIsDeleteConfirmOpen(false);
+    setEditingNoteId(null);
+    setNoteTitle("");
+    setNoteBody("");
     setSelectedNote(null);
   };
 
@@ -807,6 +841,7 @@ function App() {
               updateFileById(fileItem.id, {
                 status: "done",
                 ocrText: docData.content || "متنی از سند استخراج نشد.",
+                documentId: docId,
               });
               return;
             }
@@ -814,6 +849,7 @@ function App() {
           updateFileById(fileItem.id, {
             status: "done",
             ocrText: "پردازش انجام شد ولی متنی استخراج نشد.",
+            documentId: docId,
           });
           return;
         }
@@ -842,8 +878,10 @@ function App() {
     if (uploadingFiles) return;
 
     setUploadingFiles(true);
+    navigateTo("analysis");
 
-    await Promise.all(
+    try {
+      await Promise.all(
       selectedFiles.map(async (item) => {
         if (item.status !== "ready") return;
 
@@ -878,7 +916,7 @@ function App() {
             taskId: data.task_id,
           });
 
-          pollTask({ ...item, taskId: data.task_id });
+          await pollTask({ ...item, taskId: data.task_id });
         } catch (err) {
           console.error(err);
           updateFileById(item.id, {
@@ -887,15 +925,18 @@ function App() {
           });
         }
       })
-    );
-
-    setUploadingFiles(false);
+      );
+    } finally {
+      setUploadingFiles(false);
+    }
   };
 
   if (
     authScreen !== "complete" &&
     authScreen !== "dashboard" &&
-    authScreen !== "upload"
+    authScreen !== "upload" &&
+    authScreen !== "analysis" &&
+    authScreen !== "document-details"
   ) {
     return (
       <AppFrame
@@ -904,7 +945,7 @@ function App() {
         onBack={goBack}
       >
         <main className="auth-shell">
-          <section className="auth-card">
+          <section className="auth-card welcome-card">
             {authScreen === "welcome" && (
               <>
                 <div className="auth-logo">
@@ -1344,7 +1385,7 @@ function App() {
         canGoBack={true}
         onBack={() => navigateTo("dashboard", true)}
       >
-        <main className="auth-shell">
+        <main className="auth-shell upload-shell">
           <section className="auth-card upload-card">
 
             <h2 className="upload-page-title">بارگذاری سند جدید</h2>
@@ -1404,11 +1445,37 @@ function App() {
                   {selectedFiles.map((item) => (
                     <div className="upload-file-item" key={item.id}>
                       <div className="upload-file-row">
-                        <div className="upload-file-icon-box">
+                        <span className="upload-file-check" aria-label="فایل آماده است">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </span>
+
+                        <div className="upload-file-details">
+                          <span className="upload-file-name" dir="auto">
+                            {item.file.name}
+                          </span>
+                          <span className="upload-file-size">
+                            {toPersianDigits((item.file.size / (1024 * 1024)).toFixed(1))} مگابایت
+                          </span>
+                        </div>
+
+                        <div className="upload-file-icon-box" aria-hidden="true">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="22"
+                            height="22"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -1419,68 +1486,11 @@ function App() {
                           >
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                             <polyline points="14 2 14 8 20 8" />
+                            <line x1="8" y1="13" x2="16" y2="13" />
+                            <line x1="8" y1="17" x2="14" y2="17" />
                           </svg>
                         </div>
-
-                        <span className="upload-file-name" dir="auto">
-                          {item.file.name}
-                        </span>
-
-                        {item.status === "ready" && (
-                          <span className="upload-file-check" aria-hidden="true">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </span>
-                        )}
-                        {item.status === "uploading" && (
-                          <span className="upload-file-status">آپلود...</span>
-                        )}
-                        {item.status === "processing" && (
-                          <span className="upload-file-status">پردازش...</span>
-                        )}
-                        {item.status === "done" && (
-                          <span className="upload-file-check" aria-hidden="true">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </span>
-                        )}
-                        {item.status === "error" && (
-                          <span className="upload-file-error">!</span>
-                        )}
                       </div>
-
-                      {item.status === "done" && item.ocrText && (
-                        <div className="upload-file-ocr">
-                          <p className="upload-file-ocr-title">متن استخراج‌شده:</p>
-                          <p className="upload-file-ocr-text">{item.ocrText}</p>
-                        </div>
-                      )}
-
-                      {item.status === "error" && item.error && (
-                        <p className="upload-file-error-text">{item.error}</p>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -1490,7 +1500,7 @@ function App() {
             <button
               type="button"
               className="upload-analyze-button"
-              onClick={handleAnalyze}
+              onClick={() => void handleAnalyze()}
               disabled={
                 selectedFiles.length === 0 ||
                 uploadingFiles ||
@@ -1500,6 +1510,154 @@ function App() {
               {uploadingFiles ? "در حال پردازش..." : "شروع تحلیل هوشمند"}
             </button>
 
+          </section>
+        </main>
+      </AppFrame>
+    );
+  }
+
+  if (authScreen === "analysis") {
+    const allFilesDone =
+      selectedFiles.length > 0 &&
+      selectedFiles.every((item) => item.status === "done");
+    const hasFailure = selectedFiles.some((item) => item.status === "error");
+    const isUploading = selectedFiles.some((item) => item.status === "uploading");
+    const isProcessing = selectedFiles.some((item) => item.status === "processing");
+    const progress = allFilesDone ? 100 : isProcessing ? 66 : isUploading ? 30 : 0;
+    const steps = [
+      {
+        label: "شناسایی نوع اسناد",
+        state: isUploading ? "active" : isProcessing || allFilesDone ? "complete" : "pending",
+      },
+      {
+        label: "استخراج اطلاعات کلیدی",
+        state: isProcessing ? "active" : allFilesDone ? "complete" : "pending",
+      },
+      {
+        label: "تطبیق با داستان حقوقی",
+        state: allFilesDone ? "complete" : "pending",
+      },
+    ];
+
+    return (
+      <AppFrame
+        progress={getProgress()}
+        canGoBack={!uploadingFiles}
+        onBack={() => navigateTo("upload", true)}
+      >
+        <main className="auth-shell analysis-shell">
+          <section className="auth-card analysis-card" aria-live="polite">
+            <h1 className="analysis-title">تحلیل اسناد</h1>
+
+            <div
+              className={`analysis-progress ${allFilesDone ? "complete" : ""}`}
+              style={{ "--analysis-progress": `${progress}%` }}
+              role="progressbar"
+              aria-label="پیشرفت تحلیل اسناد"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={progress}
+            >
+              <svg
+                className="analysis-sparkle"
+                xmlns="http://www.w3.org/2000/svg"
+                width="46"
+                height="46"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-2-5.8L4 11l6-2.2L12 3Z" />
+                <path d="M19 2v5m-2.5-2.5h5" />
+                <circle cx="5" cy="18" r="1.5" />
+              </svg>
+            </div>
+
+            <h2 className="analysis-status">
+              {allFilesDone ? "تحلیل اسناد شما کامل شد" : "در حال تحلیل اسناد شما"}
+              {!allFilesDone && <span className="analysis-ellipsis" aria-hidden="true">...</span>}
+            </h2>
+            <p className="analysis-description">
+              هوش مصنوعی در حال بررسی کلمات کلیدی
+            </p>
+
+            <div className="analysis-steps" aria-label="مراحل تحلیل">
+              {steps.map((step) => (
+                <div className={`analysis-step ${step.state}`} key={step.label}>
+                  <span>{step.label}</span>
+                  <span className="analysis-step-indicator" aria-hidden="true">
+                    {step.state === "complete" ? "✓" : <span />}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {hasFailure && (
+              <div className="analysis-error" role="alert">
+                پردازش یکی از اسناد انجام نشد. برای تلاش دوباره به صفحهٔ بارگذاری برگردید.
+              </div>
+            )}
+
+            {allFilesDone && (
+              <button
+                className="auth-button auth-button-primary analysis-back-button"
+                type="button"
+                onClick={() => navigateTo("document-details")}
+              >
+                مشاهده اطلاعات پرونده
+              </button>
+            )}
+          </section>
+          <p className="analysis-footnote">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+            <span>این فرآیند معمولاً کمتر از یک دقیقه طول می‌کشد</span>
+          </p>
+        </main>
+      </AppFrame>
+    );
+  }
+
+  if (authScreen === "document-details") {
+    return (
+      <AppFrame
+        progress={getProgress()}
+        canGoBack
+        onBack={() => navigateTo("analysis", true)}
+      >
+        <main className="auth-shell document-details-shell">
+          <section className="auth-card document-details-page">
+            <h1 className="document-details-title">اطلاعات اسناد</h1>
+            <p className="document-details-description">
+              اطلاعات زیر از متن استخراج‌شدهٔ سندها شناسایی شده است.
+            </p>
+            <DocumentDetails
+              documents={selectedFiles.filter((item) => item.status === "done")}
+            />
+            <button
+              className="auth-button auth-button-primary document-details-home"
+              type="button"
+              onClick={() => navigateTo("dashboard", true)}
+            >
+              بازگشت به خانه
+            </button>
           </section>
         </main>
       </AppFrame>
@@ -1833,12 +1991,12 @@ function App() {
           >
             <div className="note-modal-header">
               <h2 id="note-detail-title" className="note-modal-title">
-                جزئیات یادداشت
+                ویرایش یادداشت
               </h2>
               <button
                 type="button"
                 className="note-modal-close"
-                onClick={() => setIsDetailModalOpen(false)}
+                onClick={handleCancelNote}
                 aria-label="بستن"
               >
                 <svg
@@ -1858,57 +2016,126 @@ function App() {
               </button>
             </div>
 
-            <p className="note-modal-hint">
-              این یادداشت در بخش «نیازمند توجه» نمایش داده شده است.
+            <p className="note-saved-date">
+              ثبت شده، {getNoteTimestampLabel(selectedNote)}
             </p>
 
-            {/* نمایش موضوع */}
-            <label className="note-modal-label">
+            <label className="note-modal-label" htmlFor="edit-note-title">
               موضوع یادداشت
             </label>
             <input
+              id="edit-note-title"
               type="text"
               className="note-modal-input"
-              value={selectedNote.title}
-              readOnly
+              value={noteTitle}
+              onChange={(event) => setNoteTitle(event.target.value)}
             />
 
-            {/* نمایش متن */}
-            <label className="note-modal-label">
+            <label className="note-modal-label" htmlFor="edit-note-body">
               متن یادداشت
             </label>
             <textarea
+              id="edit-note-body"
               className="note-modal-textarea"
-              value={selectedNote.body || "بدون متن"}
-              readOnly
+              value={noteBody}
+              onChange={(event) => setNoteBody(event.target.value)}
               rows={5}
             />
 
-            {/* نمایش تاریخ */}
-            <div style={{ fontSize: "0.8rem", color: "#777", marginTop: "0.5rem", textAlign: "left", direction: "ltr" }}>
-              {selectedNote.date} - {selectedNote.time}
-            </div>
-
-            {/* دکمه‌ها */}
-            <div className="note-modal-actions" style={{ flexDirection: "row", gap: "10px", marginTop: "20px" }}>
+            <div className="note-modal-actions">
               <button
                 type="button"
                 className="note-modal-save"
-                onClick={handleEditNote}
-                style={{ flex: 1 }}
+                onClick={handleSaveNote}
               >
-                ویرایش یادداشت
+                ذخیره تغییرات
               </button>
               <button
                 type="button"
                 className="note-modal-cancel"
-                onClick={handleDeleteNote}
-                style={{ flex: 1 }}
+                onClick={handleCancelNote}
+              >
+                انصراف
+              </button>
+            </div>
+
+            <div className="note-delete-divider" />
+            <button
+              type="button"
+              className="note-delete-link"
+              onClick={handleDeleteNote}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="m19 6-1 14H6L5 6" />
+                <path d="M10 11v6m4-6v6" />
+                <path d="M9 6V4h6v2" />
+              </svg>
+              <span>حذف یادداشت</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isDeleteConfirmOpen && selectedNote && (
+        <div
+          className="note-modal-backdrop note-delete-backdrop"
+          onClick={cancelDeleteNote}
+          role="presentation"
+        >
+          <section
+            className="note-modal note-delete-modal"
+            onClick={(event) => event.stopPropagation()}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="note-delete-title"
+            aria-describedby="note-delete-description"
+          >
+            <div className="note-delete-header">
+              <div>
+                <h2 id="note-delete-title" className="note-modal-title">
+                  آیا این یادداشت حذف شود؟
+                </h2>
+                <p id="note-delete-description" className="note-delete-description">
+                  پس از حذف، امکان بازگرداندن آن وجود ندارد.
+                </p>
+              </div>
+              <span className="note-delete-warning" aria-hidden="true">!</span>
+            </div>
+
+            <div className="note-delete-preview">
+              <strong>{selectedNote.title}</strong>
+              {selectedNote.body && <p>{selectedNote.body}</p>}
+            </div>
+
+            <div className="note-modal-actions note-delete-actions">
+              <button
+                type="button"
+                className="note-modal-cancel"
+                onClick={cancelDeleteNote}
+              >
+                انصراف
+              </button>
+              <button
+                type="button"
+                className="note-delete-confirm"
+                onClick={confirmDeleteNote}
               >
                 حذف یادداشت
               </button>
             </div>
-          </div>
+          </section>
         </div>
       )}
 
