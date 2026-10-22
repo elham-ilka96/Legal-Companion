@@ -518,8 +518,15 @@ def paperless_task_status(request, task_id):
             {"message": "دسترسی غیرمجاز."},
             status=status.HTTP_401_UNAUTHORIZED
         )
-
-    task_data = get_task_status(task_id)
+    
+    try:
+        task_data = get_task_status(task_id)
+    except Exception as exc:
+        return Response(
+            {"message": f"خطا در دریافت وضعیت تسک: {exc}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
     if task_data:
         return Response(task_data, status=status.HTTP_200_OK)
     return Response(
@@ -574,6 +581,7 @@ def paperless_get_document(request, document_id):
         response = requests.get(
             f"{settings.PAPERLESS_URL}/api/documents/{document_id}/",
             headers={"Authorization": f"Token {settings.PAPERLESS_API_TOKEN}"},
+            timeout=15,
         )
         if response.status_code == 200:
             return Response(response.json(), status=status.HTTP_200_OK)
@@ -581,8 +589,13 @@ def paperless_get_document(request, document_id):
             {"message": "سند پیدا نشد."},
             status=status.HTTP_404_NOT_FOUND
         )
-    except Exception as e:
+    except requests.RequestException:
         return Response(
-            {"message": f"خطا در دریافت سند: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            {"message": "خطا در ارتباط با Paperless هنگام دریافت سند."},
+            status=status.HTTP_502_BAD_GATEWAY
+        )
+    except ValueError:
+        return Response(
+            {"message": "پاسخ سند از Paperless قابل خواندن نیست."},
+            status=status.HTTP_502_BAD_GATEWAY
         )

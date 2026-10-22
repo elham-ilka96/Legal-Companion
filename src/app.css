@@ -3035,20 +3035,48 @@ button {
 
 .analysis-shell {
   min-height: 0;
+  flex: 1;
+  width: 100%;
+  margin: 0;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: clamp(12px, 3vh, 28px);
+  justify-content: space-between;
+  gap: 4px;
+  padding: clamp(4px, 1.5vh, 14px) 16px;
 }
 
 .analysis-card {
   width: min(100%, 520px);
-  padding: 20px 0;
+  gap: clamp(6px, 1.2vh, 12px);
+  padding: 8px 0;
 }
 
 .analysis-progress {
+  width: clamp(104px, 18vh, 148px);
   background: #e5efff;
   transition: none;
+}
+
+.analysis-title {
+  font-size: 1.15rem;
+}
+
+.analysis-description {
+  margin-top: -4px;
+  font-size: 0.82rem;
+}
+
+.analysis-steps {
+  padding: 4px 14px;
+}
+
+.analysis-step {
+  min-height: clamp(36px, 5.5vh, 46px);
+  font-size: 0.88rem;
+}
+
+.analysis-error {
+  padding: 8px 10px;
 }
 
 .analysis-progress::before {
@@ -3067,11 +3095,12 @@ button {
   justify-content: center;
   gap: 8px;
   direction: ltr;
-  margin: auto 0 10px;
-  padding: 16px 0;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 4px 0;
   color: #9097a2;
-  font-size: 0.8rem;
-  line-height: 1.7;
+  font-size: 0.74rem;
+  line-height: 1.45;
   text-align: center;
 }
 
@@ -3173,17 +3202,32 @@ button {
   }
 
   .analysis-shell {
-    padding-top: 12px;
+    gap: 2px;
+    padding: 4px 0 max(4px, env(safe-area-inset-bottom, 0px));
   }
 
   .analysis-card {
-    padding-block: 16px;
+    gap: clamp(5px, 1vh, 9px);
+    padding-block: 4px;
+  }
+
+  .analysis-progress {
+    width: clamp(100px, 17dvh, 132px);
+  }
+
+  .analysis-steps {
+    padding: 3px 10px;
+  }
+
+  .analysis-step {
+    min-height: clamp(34px, 5dvh, 40px);
+    font-size: 0.82rem;
   }
 
   .analysis-footnote {
-    margin-top: auto;
-    padding: 12px 4px max(12px, env(safe-area-inset-bottom, 0px));
-    font-size: 0.72rem;
+    margin: 0;
+    padding: 3px 4px;
+    font-size: 0.68rem;
   }
 
   .document-details-page {

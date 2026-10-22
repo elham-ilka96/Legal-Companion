@@ -10,7 +10,7 @@ from django.conf import settings
 PAPERLESS_URL = getattr(
     settings,
     "PAPERLESS_URL",
-    "http://127.0.0.1:8000",
+    "http://127.0.0.1:8002",
 ).rstrip("/")
 
 # پشتیبانی از هر دو نام برای سازگاری با تنظیمات قبلی
@@ -128,11 +128,11 @@ def get_task_status(task_uuid):
         if response.ok:
             return response.json()
 
-    except (requests.RequestException, ValueError):
-        pass
+    except (requests.RequestException, ValueError) as exc:
+        # به‌جای raise کردن، خطا رو لاگ می‌کنیم و None برمی‌گردونیم
+        print(f"[Paperless] get_task_status error: {exc}")
 
     return None
-
 
 def search_documents(query):
     """جست‌وجو در اسناد Paperless."""

@@ -436,7 +436,7 @@ function App() {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         if (response.status === 429) {
@@ -804,9 +804,14 @@ function App() {
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
 
-        if (!response.ok) continue;
-
-        const data = await response.json();
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          updateFileById(fileItem.id, {
+            status: "error",
+            error: data.message || "ارتباط با سرویس تحلیل برقرار نشد.",
+          });
+          return;
+        }
 
         const tasks = Array.isArray(data)
           ? data
@@ -1578,8 +1583,14 @@ function App() {
             </div>
 
             <h2 className="analysis-status">
-              {allFilesDone ? "تحلیل اسناد شما کامل شد" : "در حال تحلیل اسناد شما"}
-              {!allFilesDone && <span className="analysis-ellipsis" aria-hidden="true">...</span>}
+              {hasFailure
+                ? "تحلیل اسناد انجام نشد"
+                : allFilesDone
+                  ? "تحلیل اسناد شما کامل شد"
+                  : "در حال تحلیل اسناد شما"}
+              {!allFilesDone && !hasFailure && (
+                <span className="analysis-ellipsis" aria-hidden="true">...</span>
+              )}
             </h2>
             <p className="analysis-description">
               هوش مصنوعی در حال بررسی کلمات کلیدی
