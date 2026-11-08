@@ -614,7 +614,7 @@ button {
 
 .dashboard-section-title {
   color: #1a1a1a;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   font-weight: 700;
   margin: 0;
 }
@@ -875,46 +875,69 @@ button {
   opacity: 0.7;
 }
 
+/* دکمه ذخیره: آبی با متن سفید */
+.note-modal-save {
+  background-color: #1e88e5;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  flex: 1;
+}
+.note-modal-save:hover { background-color: #1565c0; }
+
+/* دکمه انصراف: سفید، هاور توسی */
+.note-modal-cancel {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  flex: 1;
+  transition: background-color .2s, color .2s;
+}
+.note-modal-cancel:hover {
+  background-color: #9e9e9e;   /* توسی */
+  color: #fff;
+}
+
+/* ردیف دکمه‌ها */
 .note-modal-actions {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.6rem;
+  gap: 12px;
+  margin-top: 16px;
 }
 
-.note-modal-save,
-.note-modal-cancel {
-  flex: 1;
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
+/* سطل قرمز در پایین مودال ویرایش */
+.note-delete-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  padding-top: 10px;
+  width: 100%;
+  border: none;
+  border-top: 1px solid #eee;
+  background: none;
+  color: #e53935;
   font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 0.6rem;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  justify-content: center;
+}
+.note-delete-trigger:hover { color: #b71c1c; }
+
+.note-delete-trigger svg {
+  width: 12px;               /* آیکون کوچیک‌تر */
+  height: 12px;
 }
 
-.note-modal-save {
-  background: #ffffff;
-  color: #1e3a8a;
-  border: 1.5px solid #1e3a8a;
-}
-
-.note-modal-save:hover {
-  background: #1e3a8a;
-  color: #ffffff;
-}
-
-.note-modal-cancel {
-  background: #ffffff;
-  color: #4b5563;
-  border: 1.5px solid #d1d5db;
-}
-
-.note-modal-cancel:hover {
-  background: #1e3a8a;
-  color: #ffffff;
-  border-color: #1e3a8a;
-}
 
 /* =========================================================
    15. فوتر پایین (BottomNav)
@@ -2257,7 +2280,7 @@ button {
 
 .analysis-progress::before {
   content: "";
-  width: calc(100% - 18px);
+  width: calc(100% - 10px);
   aspect-ratio: 1;
   grid-area: 1 / 1;
   border-radius: 50%;
@@ -2268,7 +2291,7 @@ button {
   z-index: 1;
   grid-area: 1 / 1;
   color: #1e3a8a;
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   direction: ltr;
 }
@@ -2276,7 +2299,7 @@ button {
 .analysis-status {
   margin: 0;
   color: #172033;
-  font-size: 1.1rem;
+  font-size: 0.8rem;
 }
 
 .analysis-ellipsis {
@@ -2308,9 +2331,11 @@ button {
   border-radius: 14px;
   background: #fff;
   text-align: right;
+  
 }
 
 .analysis-step {
+  height: 60px;
   min-height: 56px;
   display: flex;
   align-items: center;
@@ -2506,6 +2531,7 @@ button {
 
   .analysis-progress {
     width: clamp(140px, 40vw, 170px);
+    border-color: #90caf9 !important;
   }
 
   .analysis-step {
@@ -3087,6 +3113,10 @@ button {
   z-index: 1;
   grid-area: 1 / 1;
   color: #2563eb;
+  
+  width: 30px !important;  /* قبلاً 46px بوده، الان بزرگتر شد */
+  height: 30px !important;
+
 }
 
 .analysis-footnote {
@@ -3141,6 +3171,9 @@ button {
     #2563eb var(--analysis-progress),
     #dbeafe var(--analysis-progress)
   );
+    width: 150px !important;  
+  height: 150px !important;
+
   transition: background 450ms ease;
 }
 
@@ -3171,12 +3204,14 @@ button {
   background: #f7f2f4;
 }
 
+/* حذف کادر سفید دور صفحه اطلاعات اسناد */
 .document-details-page {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 16px;
-  margin-inline: auto;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  width: 100%;
+  max-width: 100%;
 }
 
 .document-details-title {
@@ -3233,4 +3268,365 @@ button {
   .document-details-page {
     padding: 20px 16px;
   }
+}
+
+/* =========================
+   صفحه حساب من (AccountScreen)
+   ========================= */
+.account-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  direction: rtl;
+  font-family: inherit;
+}
+
+.account-header {
+  text-align: right;
+  margin-bottom: 4px;
+}
+
+.account-title {
+  font-size: 1rem; /* سایز فونت بزرگتر شد */
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.account-subtitle {
+  font-size: 0.6rem; 
+  color: #666;
+  margin: 6px 0 0;
+}
+
+/* کارت پروفایل با بک‌گراند آبی کمرنگ */
+.account-profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e8f0fe; /* بک‌گراند آبی کمرنگ */
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #d2e3fc; /* حاشیه آبی ملایم */
+  gap: 8px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* ← محتوا را کاملاً به سمت راست (چون صفحه RTL است) می‌برد */
+  text-align: left;      /* ← متن‌ها راست‌چین می‌شوند */
+  width: 100%;            /* ← باعث می‌شود فضای کافی برای چسبیدن به راست داشته باشد */
+}
+
+.profile-info h3 {
+  font-size: 0.8rem; /* بزرگتر شدن فونت نام */
+  font-weight: 700;
+  margin: 0;
+  color: #111;
+  justify-self: start;
+}
+
+.profile-mobile {
+  font-size: 0.6rem;
+  color: #555;
+  margin: 0;
+}
+
+.profile-national-id {
+  font-size: 0.6rem;
+  color: #777;
+  margin: 0;
+}
+
+/* فلش بزرگ سمت چپ کارت پروفایل */
+.profile-arrow {
+  color: #333;
+}
+
+.profile-arrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* بخش‌ها */
+.account-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #444;
+  margin: 0 4px;
+}
+
+.account-list {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: right;
+}
+
+.account-item:last-child {
+  border-bottom: none;
+}
+
+.account-item:hover {
+  background-color: #f9f9f9;
+}
+
+/* سمت راست آیتم‌ها (آیکون + متن) */
+.item-right-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-right-side span {
+  font-size: 0.7rem; /* بزرگتر شدن فونت آیتم‌ها */
+  font-weight: 500;
+}
+
+/* کادر آیکون‌ها با بک‌گراند کمرنگ */
+.item-icon-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  background-color: #e8f0fe; /* بک‌گراند آبی کمرنگ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e88e5; /* رنگ آبی آیکون */
+}
+
+.item-icon-box svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* فلش‌های بزرگ سمت چپ */
+.item-arrow {
+  width: 18px;
+  height: 18px;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.account-item:hover .item-arrow {
+  color: #555;
+}
+
+/* استایل‌های مربوط به خروج از حساب (قرمز) */
+.text-danger span {
+  color: #e53935;
+}
+.item-icon-box.danger-icon {
+  background-color: #ffebee;
+  color: #e53935;
+}
+.text-danger.item-arrow {
+  color: #e53935;
+}
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  background-color: #1e88e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  
+}
+
+.profile-avatar svg {
+  width: 24px;
+  height: 24px;
+}
+
+.analysis-redirect-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  color: #1e88e5;
+  font-size: 0.9rem;
+  gap: 10px;
+}
+.loader-dots { display: flex; gap: 5px; }
+.loader-dots span {
+  width: 8px; height: 8px; background-color: #1e88e5; border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+.loader-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loader-dots span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+/* استایل هدر وسط‌چین */
+.story-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.story-title-center {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e88e5;
+  margin: 0;
+}
+
+.story-status-badge-center {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* استایل‌های کارت‌ها (اگر قبلاً نبود) */
+.legal-story-page {
+  background-color: #f5f5f0;
+  min-height: 100vh;
+  padding: 16px;
+  direction: rtl;
+  font-family: inherit;
+}
+
+.legal-story-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.story-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e88e5;
+  margin: 0;
+}
+
+.story-card-text {
+  font-size: 0.9rem;
+  color: #333333;
+  line-height: 1.8;
+  text-align: justify;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333333;
+  margin: 0 0 8px 0;
+  padding-right: 4px;
+}
+
+.related-cases-section,
+.related-people-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.case-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+.case-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.case-item-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333333;
+  margin: 0;
+}
+
+.case-status-badge {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.case-number {
+  font-size: 0.85rem;
+  color: #333333;
+  margin: 0;
+}
+
+.case-number span {
+  color: #1e88e5;
+  font-weight: 600;
+}
+
+.case-branch {
+  font-size: 0.8rem;
+  color: #888888;
+  margin: 0;
+}
+
+.people-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.person-tag {
+  background-color: #f0f0f0;
+  color: #333333;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
 }

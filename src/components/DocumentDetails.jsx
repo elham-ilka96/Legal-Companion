@@ -1,63 +1,55 @@
 import "./DocumentDetails.css";
 
-const detailFields = [
-  { key: "caseDate", label: "شماره پرونده", aliases: ["شماره پرونده", "تاریخ سند", "تاریخ تنظیم", "تاریخ"] },
-  { key: "documentNumber", label: "شماره سند", aliases: ["شماره سند", "شماره پرونده", "شماره دادنامه", "شماره ابلاغیه", "شماره"] },
-  { key: "defendant", label: "خوانده", aliases: ["خوانده", "محکوم علیه", "طرف خوانده"] },
-  { key: "subject", label: "موضوع پرونده", aliases: ["موضوع پرونده", "موضوع", "خواسته"] },
-];
-
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-const findFieldValue = (text, aliases) => {
-  const labels = aliases.map(escapeRegExp).join("|");
-  const expression = new RegExp(
-    `^\\s*(?:${labels})\\s*(?:[:：\\-–]\\s*)?(.*)$`,
-    "im"
-  );
-  const match = text.match(expression);
-  if (!match) return "";
-
-  const valueOnLabelLine = match[1]?.trim();
-  if (valueOnLabelLine) return valueOnLabelLine;
-
-  const lines = text.slice(match.index + match[0].length).split(/\r?\n/);
-  return lines.find((line) => line.trim())?.trim() || "";
-};
-
-const extractLegalDocumentDetails = (content = "") => {
-  const text = String(content).replace(/\r\n/g, "\n");
-  return Object.fromEntries(
-    detailFields.map(({ key, aliases }) => [
-      key,
-      findFieldValue(text, aliases),
-    ])
-  );
-};
-
 function DocumentDetails({ documents = [] }) {
   return (
-    <div className="document-details-list">
+    <div className="legal-story-page">
       {documents.map((document, index) => {
-        const details = extractLegalDocumentDetails(document.ocrText);
+        const summary = document.extractedData?.summary || "خلاصه‌ای برای این سند یافت نشد.";
+        const defendantName = "حامد بیگی";
 
         return (
-          <section
-            className="document-details-card"
-            key={document.id || document.file?.name || index}
-          >
-            <h2 className="document-details-filename" dir="auto">
-              {document.file?.name || `سند ${index + 1}`}
-            </h2>
-            <dl className="document-details-fields">
-              {detailFields.map(({ key, label }) => (
-                <div className="document-details-field" key={key}>
-                  <dt>{label}</dt>
-                  <dd>{details[key] || "در متن سند یافت نشد"}</dd>
+          <div key={document.id || index} className="legal-story-container">
+            
+            {/* هدر وسط‌چین در بالای کادر سفید */}
+            <div className="story-header-center">
+              <h1 className="story-title-center">طلاق از {defendantName}</h1>
+              <span className="story-status-badge-center">در جریان</span>
+            </div>
+
+            {/* بخش‌های داخل کادر سفید */}
+            <section className="story-card summary-card">
+              <h2 className="story-card-title">خلاصه داستان</h2>
+              <p className="story-card-text">{summary}</p>
+            </section>
+
+            <section className="related-cases-section">
+              <h2 className="section-title">پرونده‌های مرتبط</h2>
+              <div className="story-card case-item-card">
+                <div className="case-item-header">
+                  <h3 className="case-item-title">پرونده حقوقی طلاق</h3>
+                  <span className="case-status-badge">فعال</span>
                 </div>
-              ))}
-            </dl>
-          </section>
+                <p className="case-number">شماره پرونده: <span dir="ltr">۱۴۰۵/۲۵/۰۱۲۳</span></p>
+                <p className="case-branch">شعبه ۲۵ خانواده</p>
+              </div>
+              <div className="story-card case-item-card">
+                <div className="case-item-header">
+                  <h3 className="case-item-title">پرونده مهریه</h3>
+                  <span className="case-status-badge">فعال</span>
+                </div>
+                <p className="case-number">شماره پرونده: <span dir="ltr">۱۴۰۵/۲۵/۰۱۲۴</span></p>
+                <p className="case-branch">شعبه ۲۵ خانواده</p>
+              </div>
+            </section>
+
+            <section className="related-people-section">
+              <h2 className="section-title">افراد مرتبط</h2>
+              <div className="people-tags-container">
+                <span className="person-tag">حامد بیگی (خوانده)</span>
+                <span className="person-tag">سارا بهرامی (وکیل)</span>
+              </div>
+            </section>
+          </div>
         );
       })}
     </div>

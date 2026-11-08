@@ -1,50 +1,159 @@
-.document-details-list {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+/* =========================================
+   استایل‌های صفحه داستان حقوقی (Legal Story)
+   ========================================= */
 
-.document-details-card {
-  width: 100%;
+.legal-story-page {
+  background-color: #f5f5f0; /* پس‌زمینه کلی صفحه مشابه فیگما */
+  min-height: 100vh;
   padding: 16px;
-  border: 1px solid #e7eaf0;
-  border-radius: 14px;
-  background: #fff;
-  text-align: right;
+  direction: rtl;
+  font-family: inherit;
 }
 
-.document-details-filename {
-  margin: 0 0 12px;
-  color: #263243;
-  font-size: 0.92rem;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-}
-
-.document-details-fields {
+.legal-story-container {
+  max-width: 500px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+/* هدر صفحه */
+.story-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.story-title-center {
+  font-size: 1.1rem;
+  font-weight: 600; /* کمی بولدتر برای پررنگ‌تر شدن */
+  color: #0d47a1 !important; /* آبی پررنگ (همرنگ هدر سایت) */
+  
+}
+
+
+
+.story-status-badge {
+  background-color: #e0f2f1; /* سبز آبی کمرنگ */
+  color: #00796b; /* سبز پررنگ */
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* کارت‌های سفید عمومی */
+.story-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: -20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+}
+
+/* کارت خلاصه داستان */
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0d47a1; /* رنگ آبی */
   margin: 0;
 }
 
-.document-details-field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 10px 0;
-  border-top: 1px solid #f0f2f5;
-}
-
-.document-details-field dt {
-  color: #7b8491;
-  font-size: 0.78rem;
-}
-
-.document-details-field dd {
-  margin: 0;
-  color: #263243;
+.story-card-text {
   font-size: 0.9rem;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
+  color: #333333; /* رنگ مشکی */
+  line-height: 1.8;
+  text-align: justify;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* عنوان بخش‌ها (پرونده‌های مرتبط و افراد) */
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333333;
+  margin: 0 0 8px 0;
+  padding-right: 4px;
+}
+
+.related-cases-section,
+.related-people-section {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+}
+
+/* آیتم‌های پرونده (کارت‌های سفید داخل بخش) */
+.case-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+}
+
+.case-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.case-item-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333333;
+  margin: 0;
+}
+
+.case-status-badge {
+  background-color: #e0f2f1; /* سبز آبی کمرنگ */
+  color: #00796b; /* سبز پررنگ */
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.case-number {
+  font-size: 0.85rem;
+  color: #333333;
+  margin: 0;
+}
+
+.case-number span {
+  color: #1e88e5; /* شماره پرونده با رنگ آبی */
+  font-weight: 600;
+}
+
+.case-branch {
+  font-size: 0.8rem;
+  color: #888888; /* رنگ طوسی */
+  margin: 0;
+}
+
+/* بخش افراد مرتبط */
+.people-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.person-tag {
+  background-color: #ffffff;
+  color: #333333;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
 }

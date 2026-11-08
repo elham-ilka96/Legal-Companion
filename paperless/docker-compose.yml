@@ -38,13 +38,13 @@ services:
       PAPERLESS_WORKER_TIMEOUT: 3600
       PAPERLESS_TASK_WORKERS: 1
       PAPERLESS_URL: http://localhost:8000
+      PAPERLESS_SECRET_KEY: "e1OGdbIkfQOlzFxbG1l3zOopKBpJvjvK6N5USiIHI1iSkpconSoqtvHdRfxBd_bgKzg9WMeKJBWWBfUcG735BQ"
     volumes:
       - data:/usr/src/paperless/data
       - media:/usr/src/paperless/media
       - ./consume:/usr/src/paperless/consume
       - ./export:/usr/src/paperless/export
 
-  
   paperless-ai:
     image: clusterzx/paperless-ai:latest
     container_name: paperless-ai
@@ -52,23 +52,16 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # آدرس API پنل Paperless-ngx شما (توجه کنید از نام سرویس webserver استفاده شده، نه localhost)
       - PAPERLESS_AI_PAPERLESS_API_URL=http://webserver:8000
-      # توکن API را از تنظیمات Paperless-ngx خود (بخش Profile) بگیرید و اینجا قرار دهید
       - PAPERLESS_AI_API_TOKEN=YOUR_PAPERLESS_API_TOKEN_HERE
-      # نام کاربری پنل Paperless-ngx
       - PAPERLESS_AI_USERNAME=admin
-      # ارائه‌دهنده هوش مصنوعی (برای شروع، استفاده از Ollama پیشنهاد می‌شود)
       - PAPERLESS_AI_PROVIDER=ollama
-      # آدرس Ollama (اگر آن را روی سیستم خود اجرا می‌کنید)
       - PAPERLESS_AI_OLLAMA_API_URL=http://host.docker.internal:11434
-      # نام مدلی که در Ollama دانلود کرده‌اید (مثلاً llama3.2)
       - PAPERLESS_AI_OLLAMA_MODEL=llama3.2
     volumes:
       - paperless-ai-data:/app/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
 
 volumes:
   redisdata:
@@ -76,4 +69,3 @@ volumes:
   data:
   media:
   paperless-ai-data:
-  
