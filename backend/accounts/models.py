@@ -134,7 +134,7 @@ class Case(models.Model):
     case_type = models.CharField(max_length=100, blank=True, null=True)
     current_summary = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="عنوان پرونده")
     def __str__(self):
         return f"Case {self.case_number_raw}"
 

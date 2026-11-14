@@ -1,0 +1,527 @@
+/* =========================================================
+   تنظیمات عمومی و کارت‌های سفید
+   ========================================================= */
+.cases-list-page,
+.story-detail-page,
+.case-detail-page,
+.document-detail-page {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  gap: 16px;
+}
+
+.white-card {
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.section-title-black {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 8px 0 0 0;
+}
+
+
+
+/* =========================================================
+   ۱. صفحه لیست داستان‌ها
+   ========================================================= */
+.cases-header {
+  margin-bottom: 4px;
+}
+
+.cases-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.cases-search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  gap: 10px;
+}
+
+.search-icon {
+  color: #888;
+}
+
+.cases-search-bar input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.75rem;
+  outline: none;
+}
+
+.story-card {
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.story-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+.story-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -30px;
+}
+
+.story-card-date,
+.story-card-branch {
+  font-size: 0.65rem;
+  color: #777;
+  margin: 0;
+}
+
+.next-hearing {
+  font-size: 0.65rem;
+  color: #999;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-weight: normal;
+}
+
+/* =========================================================
+   هدر صفحات داخلی (دکمه بازگشت و عنوان)
+   ========================================================= */
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  direction: rtl;
+}
+
+.back-circle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #333;
+}
+
+.detail-title-blue {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  padding-right: 36px;
+}
+
+.detail-title-black {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  
+}
+
+/* =========================================================
+   ۲. صفحه جزئیات داستان
+   ========================================================= */
+.card-title-blue {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0 0 8px 0;
+}
+
+.summary-text {
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.8;
+  margin: 0;
+  text-align: justify;
+}
+
+.case-card-clickable {
+  cursor: pointer;
+}
+
+.case-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.case-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.case-card-number {
+  font-size: 0.6rem;
+  color: #1e88e5;
+  margin: 0;
+}
+
+.case-card-court {
+  font-size: 0.75rem;
+  color: #888;
+  padding-top: 25px;
+}
+
+.case-card-outlined {
+  border: 1.5px solid #2563eb;
+  border-radius: 12px;
+}
+
+.people-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.person-tag-white {
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: #333;
+}
+
+/* =========================================================
+   ۳. صفحه جزئیات پرونده (Case)
+   ========================================================= */
+.case-main-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+  text-align: right;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.info-value {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* =========================================
+   ۴. تایم‌لاین مراحل پرونده (اصلاح شده)
+   ========================================= */
+
+.documents-timeline-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: row; /* در RTL یعنی دایره سمت راست، کارت سمت چپ */
+  align-items: stretch;
+}
+
+/* ستون دایره و خط طوسی (سمت راست) */
+.timeline-graphic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px;
+  margin-left: 12px; /* فاصله از کارت سفید */
+  padding-top: 18px; /* هم‌سطح شدن دایره با عنوان */
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #2563eb;
+  border-radius: 50%;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.timeline-line {
+  width: 2px;
+  background-color: #d1d5db;
+  flex-grow: 1;
+  margin-top: 4px;
+  margin-bottom: -8px; /* اتصال به کارت بعدی */
+}
+
+/* کارت سند */
+.doc-step-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* متن راست، فلش چپ */
+  align-items: center;
+  flex: 1;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+/* بخش متن‌ها (چسبیده به سمت راست) */
+.doc-step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* در RTL یعنی راست‌چین */
+  text-align: right;
+  gap: 6px;
+}
+
+.doc-step-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.doc-step-date {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* بخش فلش (چسبیده به سمت چپ) */
+.doc-step-arrow-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-step-arrow {
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   ۵. صفحه جزئیات سند (Document)
+   ========================================================= */
+.doc-subtitle-blue {
+  font-size: 0.75rem;
+  color: #1e88e5;
+  text-align: center;
+  margin: -8px 0 16px 0;
+}
+
+.ai-summary-box {
+  background-color: #eaf2ff;
+  border: 1px solid #d2e3fc;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 0.8rem;
+  color: #333;
+  line-height: 1.8;
+}
+
+
+
+.empty-text-small {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* =========================================
+   نمایش فکت‌ها (اطلاعات کلیدی)
+   ========================================= */
+.facts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.fact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 6px;
+}
+
+.fact-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.fact-label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.fact-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* =========================================
+   صفحه جزئیات سند (Document) - استایل‌های اختصاصی
+   ========================================= */
+
+
+
+
+
+
+
+.close-circle-btn:hover {
+  background-color: #f3f4f6;
+  color: #333;
+}
+
+
+
+.doc-type {
+  font-weight: 500;
+  margin-top: -30px;
+}
+
+.doc-date-text {
+  direction: rtl;
+  margin-top: -30PX;
+}
+
+/* =========================================
+   اصلاح هدر سند (بردن دکمه به چپ)
+   ========================================= */
+.doc-header {
+  display: flex;
+  justify-content: space-between; /* عنوان راست، دکمه چپ */
+  align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.doc-title-right {
+  flex: 1; /* ⬅️ این خط باعث میشه عنوان فضای خالی رو پر کنه و دکمه رو هل بده به آخرِ چپ */
+  text-align: right;
+  margin: 0;
+  font-size: 1rem;
+  color: #1a1a1a;
+  font-weight: 800;
+}
+
+.close-circle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #888;
+  flex-shrink: 0; /* جلوگیری از کوچک شدن دکمه */
+  transition: all 0.2s ease;
+}
+
+/* =========================================
+   اصلاح ردیف نوع سند و تاریخ (کنار هم در راست)
+   ========================================= */
+.doc-meta-row {
+  display: flex;
+  justify-content: flex-start; /* ⬅️ در حالت RTL یعنی چپ‌چین نشدن و چسبیدن به راست */
+  align-items: center;
+  gap: 16px; /* ⬅️ فاصله بین نوع سند و تاریخ */
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-bottom: 1px;
+  padding: 0 4px;
+}
+
+/* =========================================
+   کم کردن فاصله بالای خلاصه هوشمند
+   ========================================= */
+.section-title-black-small {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-top: -10px;
+  margin-bottom: -10px;
+}
+
+.facts-card-wrapper {
+  margin-bottom: 8px; /* ⬅️ فاصله پایین کارت رو کم کردیم */
+}
+
+/* =========================================
+   باکس مشاهده اصل سند (طرح خط‌چین)
+   ========================================= */
+.document-scan-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background-color: #f0f6ff; /* آبی خیلی کم‌رنگ (شبیه کادر خلاصه هوشمند) */
+  border: 1.5px dashed #a3c4f3; /* حاشیه خط‌چین آبی روشن */
+  border-radius: 12px;
+  padding: 36px 20px;
+  text-decoration: none; /* حذف خط زیر لینک */
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.document-scan-box:hover {
+  background-color: #e2efff; /* کمی پررنگ‌تر موقع هاور */
+  border-color: #7fb1f5;
+}
+
+.document-scan-box span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280; /* رنگ طوسی متن */
+  text-align: center;
+}

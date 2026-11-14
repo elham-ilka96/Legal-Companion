@@ -55,12 +55,39 @@ function HomeScreen({
       <div className="dashboard-attention-panel">
         {/* نزدیک‌ترین مهلت */}
         <div className="dashboard-deadline-row">
-          <div className="dashboard-deadline-icon-box">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-          </div>
-          <span className="dashboard-deadline-title">نزدیک‌ترین مهلت</span>
-          <svg className="dashboard-deadline-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
-        </div>
+  <div className="dashboard-deadline-icon-box">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  </div>
+  <div className="dashboard-deadline-text-col">
+    <span className="dashboard-deadline-title">نزدیک‌ترین مهلت</span>
+    <span className="dashboard-deadline-days">
+      {(() => {
+        // پیدا کردن نزدیک‌ترین مهلت اعتراض از لیست پرونده‌ها
+        const cases = notes.filter((n) => n.deadline); // اگر فیلد deadline در یادداشت‌ها هست
+        if (cases.length === 0) return "مهلتی ثبت نشده است";
+
+        const today = new Date();
+        const closest = cases
+          .map((n) => new Date(n.deadline))
+          .filter((d) => d > today) // فقط تاریخ‌های آینده
+          .sort((a, b) => a - b)[0];
+
+        if (!closest) return "مهلتی در آینده وجود ندارد";
+
+        const diffDays = Math.ceil((closest - today) / (1000 * 60 * 60 * 24));
+        return `${diffDays} روز مانده`;
+      })()}
+    </span>
+  </div>
+  <svg className="dashboard-deadline-arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+</div>
 
         {/* ابلاغیه */}
         <div className="dashboard-notice-box">
@@ -83,7 +110,7 @@ function HomeScreen({
               </span>
               <span className="dashboard-note-badge">یادداشت</span>
             </div>
-            <p className="dashboard-note-title">{note.title}</p>
+            <p className="dashboard-note-title">یادداشت: {note.title}</p>
             {note.body && <p className="dashboard-note-body">{note.body}</p>}
           </div>
         ))}

@@ -43,8 +43,8 @@
 
 .bottom-nav-item .bottom-nav-icon {
   display: block;
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
 }
 
 .bottom-nav-item .bottom-nav-label {
@@ -58,10 +58,48 @@
 /* آیتم فعال */
 .bottom-nav-item.active {
   background: #dbeafe;
-  color: #1e3a8a;
+  color: #3456b3;
 }
 
 .bottom-nav-item:hover:not(.active) {
   background: #f3f4f6;
   color: #374151;
+}
+
+/* ظرف آیکون برای قرارگیری نقطه قرمز */
+.nav-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* نشانگر قرمز (Badge) با قابلیت نمایش عدد */
+.nav-badge {
+  position: absolute;
+  top: -6px;
+  right: auto;
+  left:-5px;
+  min-width: 18px;
+  height: 18px;
+  background-color: #ef4444;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid #ffffff;
+  display: flex;          /* برای وسط‌چین کردن عدد */
+  align-items: center;    /* برای وسط‌چین کردن عدد */
+  justify-content: center;/* برای وسط‌چین کردن عدد */
+  padding: 0 5px;
+  box-sizing: border-box;
+  z-index: 10;            /* برای اینکه روی بقیه المان‌ها بیاد */
+}
+
+/* انیمیشن ضربان برای جلب توجه (اختیاری، برای زیبایی بیشتر) */
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }

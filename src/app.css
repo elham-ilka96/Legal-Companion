@@ -6,14 +6,18 @@
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
   direction: rtl;
   background: #f5f7f8;
   color: #263243;
   font-family: "Vazirmatn", sans-serif;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 button,
@@ -27,6 +31,8 @@ button {
 
 #root {
   min-height: 80vh;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* =========================================================
@@ -34,12 +40,23 @@ button {
    ========================================================= */
 
 .app-frame {
-  width: min(100% - 32px, 560px);
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: #f7f2f4;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  padding: 0 16px;
+}
+
+@media (min-width: 600px) {
+  .app-frame {
+    max-width: 560px;
+    padding: 0;
+  }
 }
 
 .app-header {
@@ -48,6 +65,7 @@ button {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(59, 130, 246, 0.08);
+  padding-left: 15px;
 }
 
 .brand {
@@ -115,26 +133,11 @@ button {
    ========================================================= */
 
 .auth-shell {
-  width: 80%;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 0;
-  background: #f7f2f4;
-  margin-right: 60px;
-  min-height: 100vh;
-}
-
-.auth-card {
-  width: 100%;
-  min-width: 0;
-  padding: 28px;
-  border: none;
-  border-radius: 0;
-  background: #f7f2f4;
-  box-shadow: none;
-  margin-top: px;
+  width: 80% !important;
+  max-width: 100% !important;
+  align-items: flex-start !important; /* ⬅️ Bring to top */
+  padding-top: 20px !important;
+  margin-right: 50px; /* ⬅️ Give it a nice gap from header */
 }
 
 .auth-title {
@@ -160,6 +163,7 @@ button {
   text-align: right;
   margin-bottom: 15px;
 }
+
 
 .auth-logo img {
   width: 65px;
@@ -471,35 +475,46 @@ button {
 }
 
 /* =========================================================
-   8. داشبورد — ساختار کلی
+   8. داشبورد
    ========================================================= */
 
 .dashboard-card {
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 520px);
+  max-width: 520px;
+  align-self: flex-start;
+  gap: 16px;
+  padding: 16px 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .dashboard-greeting {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  text-align: right;
+  position: relative;
+  gap: 4px;
+  padding-left: 36px;
 }
 
+
+
 .dashboard-hello {
-  font-size: 0.9rem;
-  font-weight: 700;
   margin: 0;
-  color: #1a1a1a;
+  color: #172033;
+  font-size: 1rem;
 }
 
 .dashboard-date {
+  margin: 0;
+  color: #9298a2;
   font-size: 0.7rem;
-  color: #8a8a8a;
-  margin-top: -10px;
+  line-height: 1.5;
 }
 
 /* =========================================================
-   9. داشبورد — کارت آبی آپلود سند
+   9. کارت آبی آپلود سند
    ========================================================= */
 
 .dashboard-upload-panel {
@@ -524,7 +539,6 @@ button {
 .dashboard-upload-description {
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.7rem;
-  
   margin: 0;
 }
 
@@ -533,7 +547,7 @@ button {
   color: #ffffff;
   border: none;
   border-radius: 10px;
-  padding:  0.3rem;
+  padding: 0.3rem;
   font-size: 0.7rem;
   font-weight: 600;
   font-family: inherit;
@@ -556,7 +570,7 @@ button {
 }
 
 /* =========================================================
-   10. داشبورد — سه کارت عملیات سریع
+   10. سه کارت عملیات سریع
    ========================================================= */
 
 .dashboard-quick-actions {
@@ -564,7 +578,6 @@ button {
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
   margin-top: 0.3rem;
-  padding: -20px;
 }
 
 .dashboard-action-card {
@@ -601,7 +614,7 @@ button {
 }
 
 /* =========================================================
-   11. داشبورد — هدر بخش (نیازمند توجه / مشاهده همه)
+   11. هدر بخش (نیازمند توجه)
    ========================================================= */
 
 .dashboard-section-header {
@@ -637,7 +650,7 @@ button {
 }
 
 /* =========================================================
-   12. داشبورد — پنل نیازمند توجه (دیو کلی)
+   12. پنل نیازمند توجه
    ========================================================= */
 
 .dashboard-attention-panel {
@@ -650,7 +663,6 @@ button {
   box-shadow: 0 2px 10px rgba(30, 58, 138, 0.08);
 }
 
-/* سطر نزدیک‌ترین مهلت */
 .dashboard-deadline-row {
   display: flex;
   align-items: center;
@@ -675,11 +687,24 @@ button {
   height: 15px;
 }
 
+.dashboard-deadline-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  text-align: right;
+}
+
 .dashboard-deadline-title {
   color: #1a1a1a;
   font-size: 0.6rem;
   font-weight: 600;
-  flex: 1;
+}
+
+.dashboard-deadline-days {
+  font-size: 0.65rem;
+  color: #9298a2;
+  font-weight: 500;
 }
 
 .dashboard-deadline-arrow {
@@ -754,7 +779,7 @@ button {
 }
 
 /* =========================================================
-   14. مودال افزودن یادداشت
+   13. مودال یادداشت (افزودن، ویرایش، حذف)
    ========================================================= */
 
 .note-modal-backdrop {
@@ -822,6 +847,14 @@ button {
   margin: 0 0 0.3rem;
 }
 
+.note-modal-date {
+  color: #9298a2;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+  text-align: right;
+}
+
 .note-modal-label {
   color: #1a1a1a;
   font-size: 0.82rem;
@@ -829,28 +862,7 @@ button {
   margin-top: 0.3rem;
 }
 
-.note-modal-input {
-  width: 100%;
-  background: #ede9fe;
-  border: 1px solid #ddd6fe;
-  border-radius: 10px;
-  padding: 0.6rem 0.7rem;
-  font-family: inherit;
-  font-size: 0.82rem;
-  color: #1a1a1a;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.note-modal-input:focus {
-  border-color: #a78bfa;
-}
-
-.note-modal-input::placeholder {
-  color: #8b5cf6;
-  opacity: 0.7;
-}
-
+.note-modal-input,
 .note-modal-textarea {
   width: 100%;
   background: #ede9fe;
@@ -861,23 +873,27 @@ button {
   font-size: 0.82rem;
   color: #1a1a1a;
   outline: none;
-  resize: vertical;
-  min-height: 100px;
   transition: border-color 0.2s ease;
 }
 
+.note-modal-input:focus,
 .note-modal-textarea:focus {
   border-color: #a78bfa;
 }
 
-.note-modal-textarea::placeholder {
-  color: #8b5cf6;
-  opacity: 0.7;
+.note-modal-textarea {
+  resize: vertical;
+  min-height: 100px;
 }
 
-/* دکمه ذخیره: آبی با متن سفید */
+.note-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
 .note-modal-save {
-  background-color: #1e88e5;
+  background-color: #2563eb;
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -885,11 +901,14 @@ button {
   cursor: pointer;
   font-family: inherit;
   font-size: 0.95rem;
+  font-weight: 600;
   flex: 1;
+  transition: background-color 0.2s;
 }
-.note-modal-save:hover { background-color: #1565c0; }
+.note-modal-save:hover {
+  background-color: #1d4ed8;
+}
 
-/* دکمه انصراف: سفید، هاور توسی */
 .note-modal-cancel {
   background-color: #fff;
   color: #333;
@@ -899,52 +918,144 @@ button {
   cursor: pointer;
   font-family: inherit;
   font-size: 0.95rem;
+  font-weight: 500;
   flex: 1;
-  transition: background-color .2s, color .2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 .note-modal-cancel:hover {
-  background-color: #9e9e9e;   /* توسی */
+  background-color: #9e9e9e;
   color: #fff;
 }
 
-/* ردیف دکمه‌ها */
-.note-modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-/* سطل قرمز در پایین مودال ویرایش */
+/* دکمه حذف (لینک قرمز) */
 .note-delete-trigger {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  margin-top: 5px;
-  padding-top: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
   width: 100%;
   border: none;
   border-top: 1px solid #eee;
   background: none;
   color: #e53935;
   font-family: inherit;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   cursor: pointer;
-  justify-content: center;
 }
-.note-delete-trigger:hover { color: #b71c1c; }
-
+.note-delete-trigger:hover {
+  color: #b71c1c;
+}
 .note-delete-trigger svg {
-  width: 12px;               /* آیکون کوچیک‌تر */
-  height: 12px;
+  width: 16px;
+  height: 16px;
 }
 
+/* مودال تأیید حذف */
+.note-delete-modal {
+  background-color: #ffffff;
+  gap: 18px;
+}
+
+.note-delete-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.note-delete-header .note-modal-title {
+  color: #111111;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.note-delete-description {
+  margin: 0;
+  color: #9298a2;
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+
+.note-delete-warning {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #fff4d6;
+  color: #d99a16;
+}
+
+.note-delete-preview {
+  padding: 14px;
+  border: 1px solid #e9ecf0;
+  border-radius: 12px;
+  background: #f5f7f8;
+  color: #263243;
+  font-size: 0.86rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.note-delete-preview p {
+  margin: 8px 0 0;
+  color: #555f6d;
+  white-space: pre-wrap;
+}
+
+.note-delete-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.note-delete-actions .note-modal-cancel {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  flex: 1;
+  transition: background-color 0.2s;
+}
+.note-delete-actions .note-modal-cancel:hover {
+  background-color: #1d4ed8;
+}
+
+.note-delete-confirm {
+  background-color: #ffebee;
+  color: #c62838;
+  border: 1px solid #f7d7db;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  flex: 1;
+  transition: background-color 0.2s, color 0.2s;
+}
+.note-delete-confirm:hover {
+  background-color: #ffcdd2;
+  color: #b71c1c;
+}
 
 /* =========================================================
-   15. فوتر پایین (BottomNav)
+   14. فوتر پایین (BottomNav)
    ========================================================= */
 
 .bottom-nav {
   position: sticky;
+  z-index: 2;
   bottom: 0;
   width: 100%;
   background: #ffffff;
@@ -952,10 +1063,11 @@ button {
   display: flex;
   align-items: stretch;
   justify-content: space-around;
-  padding: 0.4rem 0.25rem;
-  gap: 0.25rem;
+  padding: 8px 4px;
+  gap: 4px;
   box-shadow: 0 -2px 10px rgba(30, 58, 138, 0.05);
   margin-top: auto;
+  border-radius: 0;
 }
 
 .bottom-nav-item {
@@ -964,8 +1076,8 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
-  padding: 0.5rem 0.25rem;
+  gap: 4px;
+  padding: 4px 2px;
   background: transparent;
   border: none;
   border-radius: 10px;
@@ -973,16 +1085,20 @@ button {
   color: #6b7280;
   font-family: inherit;
   transition: background 0.2s ease, color 0.2s ease;
+  min-height: 48px;
+  line-height: 1.2;
 }
 
-.bottom-nav-item .bottom-nav-icon,
-.bottom-nav-item .bottom-nav-label {
-  color: inherit;
+.bottom-nav-item .bottom-nav-icon {
+  display: block;
+  flex: 0 0 22px;
 }
 
 .bottom-nav-item .bottom-nav-label {
-  font-size: 0.7rem;
+  display: block;
+  font-size: 0.8rem;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .bottom-nav-item.active {
@@ -996,11 +1112,20 @@ button {
 }
 
 /* =========================================================
-   16. صفحه بارگذاری سند جدید (Upload)
+   15. صفحه بارگذاری سند (Upload)
    ========================================================= */
 
+.upload-shell {
+  background: #f7f2f4;
+  align-items: flex-start;
+}
+
 .upload-card {
-  gap: 1.2rem;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  gap: 20px;
+  margin-inline: auto;
 }
 
 .upload-page-title {
@@ -1061,14 +1186,14 @@ button {
 .upload-files-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 10px;
 }
 
 .upload-file-item {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 0.6rem 0.75rem;
+  border: 1px solid #edf0f4;
+  border-radius: 12px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -1078,1222 +1203,167 @@ button {
 .upload-file-row {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  min-width: 0;
+  gap: 12px;
 }
 
-.upload-file-status {
-  color: #2563eb;
-  font-size: 0.65rem;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.upload-file-error {
-  background: #dc2626;
-  color: #ffffff;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+.upload-file-details {
+  min-width: 0;
+  flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  direction: ltr;
+  text-align: left;
+}
+
+.upload-file-name {
+  overflow: hidden;
+  color: #263243;
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
+}
+
+.upload-file-size {
+  color: #9aa2ae;
+  font-size: 0.72rem;
+  width: 100%;
+  text-align: left;
+}
+
+.upload-file-icon-box {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #eaf2ff;
+  color: #2563eb;
+}
+
+.upload-file-check {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #dff5ed;
+  color: #24a77a;
+}
+
+.upload-analyze-button {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
   font-weight: 700;
-  font-size: 0.8rem;
-  flex-shrink: 0;
+  transition: background-color 160ms ease, opacity 160ms ease;
+  margin-top: 10px;
 }
 
-.upload-file-error-text {
-  color: #dc2626;
-  font-size: 0.7rem;
-  margin: 0;
-  line-height: 1.6;
+.upload-analyze-button:hover:not(:disabled) {
+  background: #1d4ed8;
 }
 
-.upload-file-ocr {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 0.5rem 0.65rem;
-  margin-top: 0.2rem;
-}
-
-.upload-file-ocr-title {
-  color: #1e3a8a;
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin: 0 0 0.3rem;
-}
-
-.upload-file-ocr-text {
-  color: #1f2937;
-  font-size: 0.7rem;
-  line-height: 1.7;
-  margin: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  max-height: 200px;
-  overflow-y: auto;
+.upload-analyze-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 /* =========================================================
-   17. Media Query — موبایل (max-width: 520px)
-   ⚠️ همیشه آخر فایل باشه تا استایل‌های دسکتاپ رو override کنه
+   16. صفحه تحلیل سند (Analysis)
    ========================================================= */
 
-@media (max-width: 520px) {
-  /* ===== فریم اصلی ===== */
-  .app-frame {
-    width: 100%;
-    min-height: 100dvh;
-    border-radius: 0;
-    padding-top: max(env(safe-area-inset-top, 0px), 15px);
-    padding-left: env(safe-area-inset-left, 0px);
-    padding-right: env(safe-area-inset-right, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 10px);
-  }
-
-  .auth-shell {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-  }
-
-  .auth-card {
-    
-    border-radius: 14px;
-    gap: 0.9rem;
-    margin-top: -50px;
-    margin-right: -50px;
-  }
-
-  /* ===== فونت‌های پایه ===== */
-  
-
-  .auth-description {
-    font-size: 0.7rem;
-    line-height: 1.7;
-  }
-
-  .identity-name-grid {
-    gap: 8px;
-  }
-
-  /* ===== فرم‌ها ===== */
-  .auth-form {
-    gap: 0.7rem;
-  }
-
-  .auth-form input,
-  .auth-form select {
-    padding: 0.65rem 0.75rem;
-    font-size: 0.7rem;
-  }
-
-  .auth-form label {
-    font-size: 0.7rem;
-  }
-
-  .auth-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.8rem;
-    border-radius: 10px;
-  }
-
-  /* ===== هدر ===== */
-  .app-header {
-    padding: 0.7rem 0.9rem;
-  }
-
-  .brand span {
-    font-size: 0.7rem;
-  }
-
-  .judiciary-mark svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  /* ===== داشبورد — سلام و تاریخ ===== */
-  .dashboard-greeting {
-    gap: 0.3rem;
-  }
-
-  .dashboard-hello {
-    font-size: 0.7rem;
-  }
-
-  .dashboard-date {
-    font-size: 0.5rem;
-    padding-top: 5px;
-  }
-
-  /* ===== کارت آبی ===== */
-  .dashboard-upload-panel {
-    padding: 1rem 0.9rem;
-    border-radius: 12px;
-    gap: 0.7rem;
-  }
-
-  .dashboard-upload-title {
-    font-size: 0.6rem;
-  }
-
-  .dashboard-upload-description {
-    font-size: 0.5rem;
-    line-height: 1.7;
-  }
-
-  .dashboard-upload-button {
-    padding: 0.65rem 0.85rem;
-    font-size: 0.5rem;
-    border-radius: 9px;
-    gap: 0.4rem;
-  }
-
-  .dashboard-upload-button svg {
-    width: 15px;
-    height: 18px;
-  }
-
-  /* ===== سه کارت سفید ===== */
-  .dashboard-quick-actions {
-    gap: 0.3rem;
-  }
-
-  .dashboard-action-card {
-    min-height: 40px;
-    padding: 0.35rem 0.25rem;
-    border-radius: 9px;
-    gap: 0.25rem;
-  }
-
-  .dashboard-action-icon {
-    width: 14px;
-    height: 14px;
-  }
-
-  .dashboard-action-label {
-    font-size: 0.4rem;
-  }
-
-  /* ===== هدر بخش‌ها ===== */
-  .dashboard-section-header {
-    margin-top: 0.5rem;
-    margin-bottom: 0.1rem;
-  }
-
-  .dashboard-section-title {
-    font-size: 0.5rem;
-  }
-
-  .dashboard-section-link {
-    font-size: 0.4rem;
-  }
-
-  /* ===== پنل نیازمند توجه ===== */
-  .dashboard-attention-panel {
-    padding: 0.45rem;
-    border-radius: 12px;
-    gap: 0.4rem;
-  }
-
-  .dashboard-deadline-row {
-    gap: 0.5rem;
-    padding: 0.3rem 0.2rem;
-  }
-
-  .dashboard-deadline-icon-box {
-    width: 26px;
-    height: 26px;
-    border-radius: 7px;
-  }
-
-  .dashboard-deadline-icon-box svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  .dashboard-deadline-title {
-    font-size: 0.5rem;
-  }
-
-  .dashboard-deadline-arrow {
-    width: 14px;
-    height: 14px;
-  }
-
-  .dashboard-notice-box {
-    padding: 0.5rem 0.6rem;
-    border-radius: 9px;
-  }
-
-  .dashboard-notice-text {
-    font-size: 0.5rem;
-  }
-
-  .dashboard-note-box {
-    padding: 0.5rem 0.6rem;
-    border-radius: 9px;
-    gap: 0.3rem;
-  }
-
-  .dashboard-note-time {
-    font-size: 0.5rem;
-  }
-
-  .dashboard-note-badge {
-    font-size: 0.4rem;
-    padding: 0.12rem 0.45rem;
-  }
-
-  .dashboard-note-title {
-    font-size: 0.5rem;
-  }
-
-  .dashboard-note-body {
-    font-size: 0.5rem;
-  }
-
-  
-  /* ===== مودال یادداشت ===== */
-  .note-modal {
-    padding: 1rem;
-    border-radius: 14px;
-    gap: 0.5rem;
-  }
-
-  .note-modal-title {
-    font-size: 0.92rem;
-  }
-
-  .note-modal-hint {
-    font-size: 0.72rem;
-  }
-
-  .note-modal-label {
-    font-size: 0.75rem;
-  }
-
-  .note-modal-input,
-  .note-modal-textarea {
-    font-size: 0.75rem;
-    padding: 0.55rem 0.65rem;
-  }
-
-  .note-modal-save,
-  .note-modal-cancel {
-    padding: 0.6rem 0.85rem;
-    font-size: 0.75rem;
-  }
-
-  /* ===== فوتر جدید ===== */
-  .bottom-nav {
-    padding: 0.3rem 0.15rem;
-    gap: 0.15rem;
-  }
-
-  .bottom-nav-item {
-    padding: 0.35rem 0.15rem;
-    gap: 0.15rem;
-    border-radius: 8px;
-  }
-
-  .bottom-nav-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .bottom-nav-label {
-    font-size: 0.58rem;
-  }
-
-  /* ===== فوتر امنیت ===== */
-  .security-footer {
-    font-size: 0.7rem;
-    padding: 0.4rem 0;
-  }
-
-  .security-footer svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  /* ===== کد تأیید ===== */
-  .verification-inputs {
-    gap: 0.3rem;
-  }
-
-  .verification-inputs input {
-    width: 34px;
-    height: 42px;
-    font-size: 0.95rem;
-  }
-
-  .verification-countdown,
-  .resend-button {
-    font-size: 0.7rem;
-  }
-
-  /* ===== کارت تکمیل ثبت‌نام ===== */
-  .completion-icon {
-    width: 44px;
-    height: 44px;
-    font-size: 1.3rem;
-  }
-
-  /* ===== صفحه بارگذاری سند ===== */
-  .upload-card {
-    gap: 0.9rem;
-  }
-
-  .upload-page-title {
-    font-size: 0.85rem;
-  }
-
-  .upload-dropzone {
-    padding: 1.5rem 0.75rem;
-    min-height: 140px;
-    border-radius: 14px;
-    gap: 0.45rem;
-  }
-
-  .upload-dropzone-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .upload-dropzone-text {
-    font-size: 0.7rem;
-  }
-
-  .upload-dropzone-hint {
-    font-size: 0.58rem;
-  }
-
-  .upload-files-title {
-    font-size: 0.7rem;
-  }
-
-  .upload-file-item {
-    padding: 0.5rem 0.6rem;
-    gap: 0.5rem;
-    border-radius: 9px;
-  }
-
-  .upload-file-icon-box {
-    width: 26px;
-    height: 26px;
-    border-radius: 7px;
-  }
-
-  .upload-file-icon-box svg {
-    width: 13px;
-    height: 13px;
-  }
-
-  .upload-file-name {
-    font-size: 0.6rem;
-  }
-
-  .upload-file-check {
-    width: 18px;
-    height: 18px;
-  }
-
-  .upload-analyze-button {
-    padding: 0.75rem 0.85rem;
-    font-size: 0.7rem;
-    border-radius: 10px;
-  }
-
-    .upload-file-status {
-    font-size: 0.58rem;
-  }
-
-  .upload-file-error {
-    width: 18px;
-    height: 18px;
-    font-size: 0.7rem;
-  }
-
-  .upload-file-error-text {
-    font-size: 0.6rem;
-  }
-
-  .upload-file-ocr {
-    padding: 0.4rem 0.5rem;
-  }
-
-  .upload-file-ocr-title {
-    font-size: 0.62rem;
-  }
-
-  .upload-file-ocr-text {
-    font-size: 0.6rem;
-    max-height: 150px;
-  }
-}
-
-/* تنظیمات دکمه‌های مودال (افزودن، ویرایش و حذف) */
-.note-modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.note-modal-save,
-.note-modal-cancel {
-  flex: 1; /* عرض برابر */
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.2s;
-}
-
-/* رنگ دکمه ذخیره (و ویرایش) */
-.note-modal-save {
-  background-color: #2563eb; /* رنگ آبی اصلی */
-  color: white;
-}
-.note-modal-save:hover {
-  background-color: #1d4ed8;
-}
-
-/* رنگ دکمه انصراف (و حذف) */
-.note-modal-cancel {
-  background-color: #c72121; /* رنگ خاکستری */
-  color: white;
-}
-.note-modal-cancel:hover {
-  background-color: #bd0f0f;
-}
-
-/* Responsive app layout for mobile TWA and desktop browsers */
-.app-frame {
-  width: min(100%, 1280px);
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 0 clamp(16px, 4vw, 56px);
-  overflow-x: clip;
-}
-
-.app-header {
-  min-height: 68px;
-  padding-inline: 0;
-}
-
-.brand {
-  gap: 12px;
-  font-size: 1rem;
-}
-
-.judiciary-mark {
-  flex: 0 0 auto;
-  margin: 0;
-}
-
-.auth-shell {
-  width: 100%;
-  min-height: 0;
-  margin: 0;
-  padding: clamp(24px, 5vh, 56px) 0;
-}
-
-.auth-card {
-  width: min(100%, 520px);
-  margin: 0;
-  padding: clamp(24px, 4vw, 40px);
-  border: 1px solid #e5eaf0;
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 16px 48px rgba(30, 58, 138, 0.08);
-}
-
-.auth-title {
-  font-size: 1.4rem;
-}
-
-.auth-page-title {
-  font-size: 1.55rem;
-}
-
-.auth-description {
-  font-size: 0.95rem;
-}
-
-.dashboard-card {
-  width: 100%;
-  max-width: 1120px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
-  align-self: center;
-  gap: 20px 24px;
-}
-
-.dashboard-card > * {
-  min-width: 0;
-}
-
-.dashboard-greeting,
-.bottom-nav {
-  grid-column: 1 / -1;
-}
-
-.dashboard-upload-panel {
-  grid-column: 1;
-  margin-top: 0;
-  padding: 24px;
-  gap: 16px;
-}
-
-.dashboard-upload-title {
-  font-size: 1.15rem;
-}
-
-.dashboard-upload-description {
-  font-size: 0.95rem;
-  line-height: 1.8;
-}
-
-.dashboard-upload-button {
-  min-height: 48px;
-  padding: 10px 16px;
-  font-size: 0.9rem;
-}
-
-.dashboard-quick-actions {
-  grid-column: 2;
-  align-self: stretch;
-  gap: 12px;
-  margin: 0;
-}
-
-.dashboard-action-card {
-  min-height: 120px;
-  padding: 16px 10px;
-  gap: 12px;
-}
-
-.dashboard-action-icon {
-  width: 26px;
-  height: 26px;
-}
-
-.dashboard-action-label {
-  font-size: 0.9rem;
-}
-
-.dashboard-section-header {
-  grid-column: 1;
-  margin: 0;
-  align-self: end;
-}
-
-.dashboard-section-title {
-  font-size: 1rem;
-}
-
-.dashboard-section-link {
-  font-size: 0.9rem;
-}
-
-.dashboard-attention-panel {
-  grid-column: 2;
-  grid-row: 3 / span 2;
-  padding: 16px;
-  gap: 12px;
-}
-
-.dashboard-deadline-row {
-  gap: 12px;
-  padding: 8px 4px;
-}
-
-.dashboard-deadline-title,
-.dashboard-notice-text,
-.dashboard-note-title {
-  font-size: 0.9rem;
-}
-
-.dashboard-notice-box,
-.dashboard-note-box {
-  padding: 12px;
-}
-
-.dashboard-note-time,
-.dashboard-note-badge,
-.dashboard-note-body {
-  font-size: 0.8rem;
-}
-
-.dashboard-note-header {
-  flex-wrap: wrap;
-}
-
-.bottom-nav {
-  position: sticky;
-  z-index: 2;
-  bottom: 0;
-  padding: 8px 4px;
-  background: #fff;
-}
-
-.bottom-nav-item {
-  min-height: 56px;
-}
-
-.bottom-nav-item .bottom-nav-label {
-  font-size: 0.8rem;
-}
-
-.upload-card {
-  gap: 20px;
-}
-
-.upload-page-title {
-  font-size: 1.25rem;
-}
-
-.upload-dropzone-text,
-.upload-files-title {
-  font-size: 0.95rem;
-}
-
-.upload-dropzone-hint,
-.upload-file-name,
-.upload-file-status,
-.upload-file-ocr-title,
-.upload-file-ocr-text {
-  font-size: 0.85rem;
-}
-
-.note-modal {
-  max-height: min(90vh, 760px);
-  max-height: min(90dvh, 760px);
-}
-
-@media (max-width: 900px) {
-  .app-frame {
-    padding-inline: clamp(16px, 4vw, 32px);
-  }
-
-  .auth-shell {
-    padding-block: 24px;
-  }
-
-  .dashboard-card {
-    max-width: 760px;
-    gap: 16px;
-  }
-}
-
-@media (max-width: 600px) {
-  .app-frame {
-    width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: max(12px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
-    border-radius: 0;
-  }
-
-  .app-header {
-    min-height: 56px;
-    padding: 6px 0;
-  }
-
-  .brand {
-    font-size: 0.95rem;
-  }
-
-  .judiciary-mark {
-    width: 36px;
-    height: 36px;
-    border-radius: 11px;
-  }
-
-  .judiciary-mark svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .back-button,
-  .header-spacer {
-    width: 40px;
-    height: 40px;
-  }
-
-  .auth-shell {
-    flex: 1;
-    align-items: center;
-    padding: 20px 0;
-  }
-
-  .auth-card {
-    width: 100%;
-    padding: clamp(20px, 6vw, 28px);
-    border-radius: 18px;
-    box-shadow: 0 8px 28px rgba(30, 58, 138, 0.07);
-  }
-
-  .auth-title {
-    font-size: 1.25rem;
-  }
-
-  .auth-page-title {
-    font-size: 1.4rem;
-  }
-
-  .auth-description {
-    font-size: 0.9rem;
-    line-height: 1.8;
-  }
-
-  .auth-form {
-    gap: 12px;
-  }
-
-  .auth-form input:not([type="radio"]),
-  .phone-input-panel input,
-  .note-modal-input,
-  .note-modal-textarea {
-    font-size: 16px;
-  }
-
-  .auth-form label,
-  .phone-input-panel label,
-  .verification-panel > label,
-  .identity-field label {
-    font-size: 0.9rem;
-  }
-
-  .auth-button {
-    min-height: 48px;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
-
-  .auth-shell .auth-card:not(.dashboard-card) {
-    margin: 0;
-  }
-
-  .privacy-notice {
-    align-items: flex-start;
-    padding: 12px;
-    font-size: 0.85rem;
-  }
-
-  .identity-name-grid,
-  .gender-options {
-    gap: 8px;
-  }
-
-  .verification-inputs {
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .verification-inputs input {
-    width: min(14%, 52px) !important;
-    height: 48px;
-    font-size: 1.1rem;
-  }
-
-  .dashboard-card {
-    display: flex;
-    width: 100%;
-    max-width: none;
-    align-self: stretch;
-    gap: 16px;
-    padding: 20px 16px;
-  }
-
-  .dashboard-hello {
-    font-size: 1rem;
-  }
-
-  .dashboard-date {
-    margin: 0;
-    padding: 0;
-    font-size: 0.8rem;
-    line-height: 1.6;
-  }
-
-  .dashboard-upload-panel {
-    padding: 16px;
-    gap: 10px;
-  }
-
-  .dashboard-upload-title {
-    font-size: 1rem;
-  }
-
-  .dashboard-upload-description {
-    font-size: 0.85rem;
-  }
-
-  .dashboard-upload-button {
-    min-height: 46px;
-    padding: 9px 12px;
-    font-size: 0.85rem;
-  }
-
-  .dashboard-quick-actions {
-    width: 100%;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .dashboard-action-card {
-    min-height: 88px;
-    padding: 10px 6px;
-    gap: 8px;
-  }
-
-  .dashboard-action-icon {
-    width: 22px;
-    height: 22px;
-  }
-
-  .dashboard-action-label {
-    font-size: 0.75rem;
-    line-height: 1.5;
-  }
-
-  .dashboard-section-header {
-    margin: 0;
-  }
-
-  .dashboard-section-title {
-    font-size: 0.95rem;
-  }
-
-  .dashboard-section-link {
-    font-size: 0.8rem;
-  }
-
-  .dashboard-attention-panel {
-    padding: 12px;
-    gap: 8px;
-  }
-
-  .dashboard-deadline-title,
-  .dashboard-notice-text,
-  .dashboard-note-title {
-    font-size: 0.85rem;
-  }
-
-  .dashboard-notice-box,
-  .dashboard-note-box {
-    padding: 10px;
-  }
-
-  .dashboard-note-time,
-  .dashboard-note-badge,
-  .dashboard-note-body {
-    font-size: 0.75rem;
-  }
-
-  .bottom-nav {
-    padding: 6px 0 max(6px, env(safe-area-inset-bottom, 0px));
-  }
-
-  .bottom-nav-item {
-    min-height: 52px;
-    padding: 6px 2px;
-  }
-
-  .bottom-nav-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .bottom-nav-item .bottom-nav-label {
-    font-size: 0.72rem;
-  }
-
-  .upload-card {
-    gap: 16px;
-  }
-
-  .upload-page-title {
-    font-size: 1.1rem;
-  }
-
-  .upload-dropzone {
-    min-height: 150px;
-    padding: 24px 12px;
-  }
-
-  .upload-dropzone-text,
-  .upload-files-title {
-    font-size: 0.85rem;
-  }
-
-  .upload-dropzone-hint,
-  .upload-file-name,
-  .upload-file-status,
-  .upload-file-ocr-title,
-  .upload-file-ocr-text {
-    font-size: 0.75rem;
-  }
-
-  .upload-file-row {
-    min-width: 0;
-  }
-
-  .upload-file-name {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
-  .upload-file-item {
-    padding: 10px;
-  }
-
-  .note-modal-backdrop {
-    align-items: flex-end;
-    padding: 12px max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
-  }
-
-  .note-modal {
-    max-width: none;
-    max-height: 90vh;
-    max-height: 90dvh;
-    border-radius: 18px 18px 12px 12px;
-  }
-
-  .note-modal-hint,
-  .note-modal-label,
-  .note-modal-save,
-  .note-modal-cancel {
-    font-size: 0.85rem;
-  }
-
-  .security-footer {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .app-frame {
-    padding-inline: 12px;
-  }
-
-  .dashboard-card {
-    padding-inline: 12px;
-  }
-
-  .dashboard-quick-actions {
-    gap: 6px;
-  }
-
-  .dashboard-action-label {
-    font-size: 0.7rem;
-  }
-}
-
-/* Dashboard follows the compact mobile mockup on every viewport. */
-.dashboard-card {
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 520px);
-  max-width: 520px;
-  align-self: flex-start;
-  gap: 16px;
-  padding: 16px 0 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.dashboard-greeting {
-  position: relative;
-  gap: 4px;
-  padding-left: 36px;
-}
-
-.dashboard-greeting::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #e8eaed;
-}
-
-.dashboard-hello {
-  margin: 0;
-  color: #172033;
-  font-size: 1rem;
-}
-
-.dashboard-date {
-  margin: 0;
-  color: #9298a2;
-  font-size: 0.7rem;
-  line-height: 1.5;
-}
-
-.dashboard-upload-panel,
-.dashboard-quick-actions,
-.dashboard-section-header,
-.dashboard-attention-panel {
-  width: 100%;
-  margin: 0;
-}
-
-.dashboard-upload-panel {
-  padding: 18px;
-  border-radius: 16px;
-}
-
-.dashboard-upload-title {
-  font-size: 0.95rem;
-}
-
-.dashboard-upload-description {
-  font-size: 0.72rem;
-  line-height: 1.8;
-}
-
-.dashboard-upload-button {
-  min-height: 42px;
-  background: #2563eb;
-  color: #fff;
-  font-size: 0.78rem;
-}
-
-.dashboard-quick-actions {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.dashboard-action-card {
-  min-height: 72px;
-  padding: 8px 4px;
-  gap: 6px;
-  border-radius: 12px;
-}
-
-.dashboard-action-icon {
-  width: 18px;
-  height: 18px;
-}
-
-.dashboard-action-label {
-  font-size: 0.56rem;
-}
-
-.dashboard-section-header {
-  align-items: center;
-  margin-top: 0;
-}
-
-.dashboard-section-title {
-  font-size: 0.76rem;
-}
-
-.dashboard-section-link {
-  color: #2563eb;
-  font-size: 0.62rem;
-}
-
-.dashboard-attention-panel {
-  padding: 8px;
-  gap: 8px;
-  border: 1px solid #e7eaf0;
-  border-radius: 14px;
-  background: #fff;
-}
-
-.dashboard-deadline-title,
-.dashboard-notice-text,
-.dashboard-note-title {
-  font-size: 0.65rem;
-}
-
-.dashboard-note-time,
-.dashboard-note-badge,
-.dashboard-note-body {
-  font-size: 0.55rem;
-}
-
-.dashboard-greeting,
-.dashboard-upload-panel,
-.dashboard-quick-actions,
-.dashboard-section-header,
-.dashboard-attention-panel,
-.dashboard-card > .bottom-nav {
-  flex-shrink: 0;
-}
-
-.bottom-nav {
-  border-radius: 0;
-  box-shadow: none;
-}
-
 .analysis-shell {
+  background: #f7f2f4;
   align-items: flex-start;
-  background: #f5f7f8;
+  min-height: 0;
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: clamp(4px, 1.5vh, 14px) 16px;
 }
 
 .analysis-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  gap: clamp(6px, 1.2vh, 12px);
   margin-inline: auto;
-  background: #fff;
   text-align: center;
+  width: min(100%, 520px);
+  padding: 8px 0;
 }
 
 .analysis-title {
   width: 100%;
   margin: 0;
   color: #1e3a8a;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   text-align: center;
 }
 
 .analysis-progress {
   --analysis-progress: 0%;
-  width: clamp(150px, 42vw, 190px);
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
   background: conic-gradient(
     #2563eb var(--analysis-progress),
     #dbeafe var(--analysis-progress)
   );
+  width: 150px !important;
+  height: 150px !important;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
   transition: background 450ms ease;
 }
 
 .analysis-progress::before {
   content: "";
-  width: calc(100% - 10px);
+  display: block;
+  width: 86%;
   aspect-ratio: 1;
   grid-area: 1 / 1;
   border-radius: 50%;
-  background: #fff;
+  background: #f5f7f8;
+  z-index: 0;
 }
 
-.analysis-progress span {
+.analysis-progress::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 60%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #e5efff;
+  z-index: 0;
+}
+
+.analysis-sparkle {
   z-index: 1;
   grid-area: 1 / 1;
-  color: #1e3a8a;
-  font-size: 1rem;
-  font-weight: 700;
-  direction: ltr;
+  color: #2563eb;
+  width: 52px;
+  height: 52px;
 }
 
 .analysis-status {
@@ -2302,23 +1372,10 @@ button {
   font-size: 0.8rem;
 }
 
-.analysis-ellipsis {
-  display: inline-block;
-  width: 1.25em;
-  overflow: hidden;
-  vertical-align: bottom;
-  animation: analysis-dots 1.2s steps(4, end) infinite;
-}
-
-@keyframes analysis-dots {
-  0% { width: 0; }
-  100% { width: 1.25em; }
-}
-
 .analysis-description {
-  margin: -8px 0 0;
+  margin: -4px 0 0;
   color: #8a94a3;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
 }
 
 .analysis-steps {
@@ -2326,23 +1383,22 @@ button {
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: 8px 16px;
+  padding: 4px 14px;
   border: 1px solid #e5eaf0;
   border-radius: 14px;
   background: #fff;
   text-align: right;
-  
 }
 
 .analysis-step {
   height: 60px;
-  min-height: 56px;
+  min-height: clamp(36px, 5.5vh, 46px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   color: #baa4a5;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   transition: color 180ms ease;
 }
 
@@ -2391,7 +1447,7 @@ button {
 
 .analysis-error {
   width: 100%;
-  padding: 12px;
+  padding: 8px 10px;
   border-radius: 10px;
   background: #fff1f2;
   color: #c62838;
@@ -2401,722 +1457,6 @@ button {
 
 .analysis-back-button {
   max-width: 320px;
-}
-
-.upload-files-list {
-  gap: 10px;
-}
-
-.upload-file-item {
-  padding: 12px;
-  border-color: #edf0f4;
-  border-radius: 12px;
-  background: #fff;
-}
-
-.upload-file-row {
-  min-width: 0;
-  gap: 12px;
-}
-
-.upload-file-details {
-  min-width: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.upload-file-name {
-  overflow: hidden;
-  color: #263243;
-  font-size: 0.85rem;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.upload-file-size {
-  color: #9aa2ae;
-  font-size: 0.72rem;
-}
-
-.upload-file-icon-box {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: #eaf2ff;
-  color: #2563eb;
-}
-
-.upload-file-check {
-  width: 24px;
-  height: 24px;
-  flex: 0 0 24px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #dff5ed;
-  color: #24a77a;
-}
-
-.upload-analyze-button {
-  width: 100%;
-  min-height: 48px;
-  padding: 12px 16px;
-  border: 0;
-  border-radius: 12px;
-  background: #2563eb;
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 700;
-  transition: background-color 160ms ease, opacity 160ms ease;
-}
-
-.upload-analyze-button:hover:not(:disabled) {
-  background: #1d4ed8;
-}
-
-.upload-analyze-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-@media (max-width: 600px) {
-  .auth-shell {
-    align-items: flex-start;
-    padding-top: 12px;
-  }
-
-  .analysis-shell {
-    padding-top: 16px;
-  }
-
-  .dashboard-card {
-    align-self: flex-start;
-    padding-top: 12px;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .dashboard-upload-panel {
-    padding: 16px;
-  }
-
-  .dashboard-action-card {
-    min-height: 68px;
-  }
-
-  .dashboard-action-label {
-    font-size: 0.58rem;
-  }
-
-  .upload-file-item {
-    padding: 10px;
-  }
-
-  .upload-file-icon-box {
-    width: 38px;
-    height: 38px;
-    flex-basis: 38px;
-  }
-
-  .analysis-card {
-    gap: 14px;
-  }
-
-  .analysis-progress {
-    width: clamp(140px, 40vw, 170px);
-    border-color: #90caf9 !important;
-  }
-
-  .analysis-step {
-    min-height: 52px;
-    font-size: 0.88rem;
-  }
-}
-
-.note-modal {
-  gap: 12px;
-  background: #fff;
-}
-
-.note-modal-title {
-  color: #172033;
-  font-size: 1rem;
-}
-
-.note-modal-hint {
-  margin: 0;
-}
-
-.note-modal-label {
-  margin: 0;
-  color: #263243;
-  font-size: 0.82rem;
-}
-
-.note-modal-input,
-.note-modal-textarea {
-  background: #f5f7f8;
-  border-color: #e6e9ee;
-  font-family: inherit;
-  font-size: 0.9rem;
-}
-
-.note-modal-input:focus,
-.note-modal-textarea:focus {
-  border-color: #2563eb;
-}
-
-.note-saved-date {
-  margin: -4px 0 2px;
-  color: #8b929e;
-  font-size: 0.76rem;
-  line-height: 1.7;
-}
-
-.note-modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.note-modal-actions .note-modal-save,
-.note-modal-actions .note-modal-cancel,
-.note-delete-confirm {
-  min-height: 44px;
-  flex: 1;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
-}
-
-.note-modal-actions .note-modal-save {
-  border: 1px solid #1d4ed8;
-  background: #1d4ed8;
-  color: #fff;
-}
-
-.note-modal-actions .note-modal-save:hover {
-  background: #1e40af;
-  color: #fff;
-}
-
-.note-modal-actions .note-modal-cancel {
-  border: 1px solid #d6dbe3;
-  background: #fff;
-  color: #4b5563;
-}
-
-.note-modal-actions .note-modal-cancel:hover {
-  border-color: #e4e7eb;
-  background: #f5f7f8;
-  color: #4b5563;
-}
-
-.note-delete-divider {
-  width: 100%;
-  height: 1px;
-  margin-top: 4px;
-  background: #edf0f3;
-}
-
-.note-delete-link {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 0;
-  border: 0;
-  background: transparent;
-  color: #d14343;
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.note-delete-link:hover {
-  color: #b4232f;
-}
-
-.note-delete-backdrop {
-  z-index: 120;
-}
-
-.note-delete-modal {
-  gap: 18px;
-}
-
-.note-delete-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.note-delete-header .note-modal-title {
-  margin: 0;
-}
-
-.note-delete-description {
-  margin: 8px 0 0;
-  color: #646d7a;
-  font-size: 0.85rem;
-  line-height: 1.8;
-}
-
-.note-delete-warning {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: #fff4d6;
-  color: #d99a16;
-  font-size: 1.35rem;
-  font-weight: 800;
-}
-
-.note-delete-preview {
-  padding: 14px;
-  border: 1px solid #e9ecf0;
-  border-radius: 12px;
-  background: #f5f7f8;
-  color: #263243;
-  font-size: 0.86rem;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-}
-
-.note-delete-preview p {
-  margin: 8px 0 0;
-  color: #555f6d;
-  white-space: pre-wrap;
-}
-
-.note-delete-actions {
-  margin-top: 0;
-}
-
-.note-delete-actions .note-modal-cancel {
-  border-color: #1d4ed8;
-  background: #1d4ed8;
-  color: #fff;
-}
-
-.note-delete-actions .note-modal-cancel:hover {
-  border-color: #1e40af;
-  background: #1e40af;
-  color: #fff;
-}
-
-.note-delete-confirm {
-  border: 1px solid #f7d7db;
-  background: #fff0f1;
-  color: #c62838;
-  cursor: pointer;
-}
-
-.note-delete-confirm:hover {
-  border-color: #efb9c0;
-  background: #ffe3e6;
-  color: #b4232f;
-}
-
-@media (max-width: 600px) {
-  .note-modal {
-    gap: 10px;
-    padding: 18px;
-  }
-
-  .note-modal-actions .note-modal-save,
-  .note-modal-actions .note-modal-cancel,
-  .note-delete-confirm {
-    font-size: 0.76rem;
-  }
-}
-
-/* Keep the primary screens compact and evenly aligned in short viewports. */
-.bottom-nav {
-  height: auto;
-  min-height: 64px;
-  align-items: stretch;
-  padding: 8px 4px;
-  gap: 4px;
-}
-
-.bottom-nav-item {
-  height: auto;
-  min-height: 48px;
-  justify-content: center;
-  gap: 4px;
-  padding: 4px 2px;
-  line-height: 1.2;
-}
-
-.bottom-nav-item .bottom-nav-icon {
-  display: block;
-  flex: 0 0 22px;
-}
-
-.bottom-nav-item .bottom-nav-label {
-  display: block;
-  line-height: 1.2;
-}
-
-.welcome-card {
-  padding-block: clamp(20px, 3.5vh, 32px);
-}
-
-.welcome-card .auth-logo {
-  margin-bottom: 10px;
-}
-
-.welcome-card .auth-description {
-  margin-bottom: 16px;
-}
-
-.welcome-card .privacy-notice {
-  margin-block: 16px;
-}
-
-.welcome-card .security-footer {
-  margin-top: 16px;
-}
-
-.dashboard-card > .bottom-nav {
-  flex-shrink: 0;
-}
-
-@media (max-height: 760px) {
-  .app-frame {
-    min-height: 100svh;
-  }
-
-  .app-header {
-    min-height: 56px;
-  }
-
-  .auth-shell {
-    padding-block: clamp(8px, 1.5vh, 16px);
-  }
-
-  .auth-card {
-    padding-block: clamp(18px, 3vh, 26px);
-  }
-
-  .welcome-card .auth-logo img {
-    width: 54px;
-    height: 50px;
-    padding: 10px;
-  }
-
-  .welcome-card .auth-title {
-    margin-bottom: 8px;
-    font-size: 1.2rem;
-  }
-
-  .welcome-card .auth-description {
-    margin-bottom: 10px;
-    font-size: 0.86rem;
-    line-height: 1.65;
-  }
-
-  .welcome-card .privacy-notice {
-    margin-block: 10px;
-    padding: 10px;
-    font-size: 0.8rem;
-  }
-
-  .welcome-card .privacy-notice p {
-    line-height: 1.55;
-  }
-
-  .welcome-card .auth-actions {
-    gap: 10px;
-  }
-
-  .welcome-card .auth-button {
-    min-height: 44px;
-    padding-block: 8px;
-  }
-
-  .welcome-card .security-footer {
-    margin-top: 10px;
-  }
-
-  .bottom-nav {
-    min-height: 60px;
-    padding-block: 6px;
-  }
-
-  .bottom-nav-item {
-    min-height: 46px;
-  }
-}
-
-@media (max-height: 600px) {
-  .app-header {
-    min-height: 48px;
-  }
-
-  .judiciary-mark {
-    width: 34px;
-    height: 34px;
-  }
-
-  .welcome-card {
-    padding-block: 14px;
-  }
-
-  .welcome-card .auth-logo {
-    margin-bottom: 6px;
-  }
-
-  .welcome-card .auth-logo img {
-    width: 46px;
-    height: 44px;
-    padding: 8px;
-  }
-
-  .welcome-card .auth-title {
-    margin-bottom: 4px;
-    font-size: 1.08rem;
-  }
-
-  .welcome-card .auth-description {
-    margin-bottom: 8px;
-    font-size: 0.8rem;
-    line-height: 1.5;
-  }
-
-  .welcome-card .privacy-notice {
-    margin-block: 8px;
-    padding: 8px;
-  }
-
-  .welcome-card .auth-actions {
-    gap: 8px;
-  }
-
-  .welcome-card .security-footer {
-    margin-top: 8px;
-    font-size: 0.75rem;
-  }
-}
-
-@media (max-height: 650px) {
-  .dashboard-card {
-    gap: 10px;
-    padding-top: 10px;
-  }
-
-  .dashboard-greeting {
-    gap: 2px;
-  }
-
-  .dashboard-upload-panel {
-    gap: 7px;
-    padding: 12px;
-  }
-
-  .dashboard-upload-title {
-    font-size: 0.85rem;
-  }
-
-  .dashboard-upload-description {
-    font-size: 0.68rem;
-    line-height: 1.55;
-  }
-
-  .dashboard-upload-button {
-    min-height: 36px;
-    padding: 7px 10px;
-    font-size: 0.75rem;
-  }
-
-  .dashboard-action-card {
-    min-height: 56px;
-    padding-block: 6px;
-    gap: 4px;
-  }
-
-  .dashboard-action-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .dashboard-action-label {
-    font-size: 0.52rem;
-  }
-
-  .dashboard-attention-panel {
-    gap: 6px;
-    padding: 7px;
-  }
-
-  .dashboard-deadline-row {
-    padding-block: 2px;
-  }
-
-  .dashboard-notice-box,
-  .dashboard-note-box {
-    padding: 7px;
-  }
-
-  .bottom-nav {
-    min-height: 56px;
-    padding-block: 4px;
-  }
-
-  .bottom-nav-item {
-    min-height: 44px;
-  }
-}
-
-@media (max-height: 600px) {
-  .dashboard-card {
-    gap: 7px;
-  }
-
-  .dashboard-upload-panel {
-    gap: 5px;
-    padding: 9px 12px;
-  }
-
-  .dashboard-upload-description {
-    font-size: 0.64rem;
-    line-height: 1.45;
-  }
-
-  .dashboard-action-card {
-    min-height: 50px;
-  }
-
-  .dashboard-attention-panel {
-    gap: 4px;
-  }
-
-  .dashboard-deadline-icon-box {
-    width: 24px;
-    height: 24px;
-  }
-
-  .dashboard-notice-box,
-  .dashboard-note-box {
-    padding: 5px 7px;
-  }
-
-  .bottom-nav {
-    min-height: 50px;
-    padding-block: 2px;
-  }
-
-  .bottom-nav-item {
-    min-height: 42px;
-  }
-}
-
-.upload-shell,
-.analysis-shell {
-  background: #f7f2f4;
-}
-
-.upload-card,
-.analysis-card {
-  border-color: transparent;
-  background: transparent;
-  box-shadow: none;
-}
-
-.upload-card {
-  gap: 20px;
-}
-
-.upload-analyze-button {
-  margin-top: 10px;
-}
-
-.upload-file-details {
-  align-items: flex-start;
-  direction: ltr;
-  text-align: left;
-}
-
-.upload-file-name,
-.upload-file-size {
-  width: 100%;
-  text-align: left;
-}
-
-.analysis-shell {
-  min-height: 0;
-  flex: 1;
-  width: 100%;
-  margin: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  padding: clamp(4px, 1.5vh, 14px) 16px;
-}
-
-.analysis-card {
-  width: min(100%, 520px);
-  gap: clamp(6px, 1.2vh, 12px);
-  padding: 8px 0;
-}
-
-.analysis-progress {
-  width: clamp(104px, 18vh, 148px);
-  background: #e5efff;
-  transition: none;
-}
-
-.analysis-title {
-  font-size: 1.15rem;
-}
-
-.analysis-description {
-  margin-top: -4px;
-  font-size: 0.82rem;
-}
-
-.analysis-steps {
-  padding: 4px 14px;
-}
-
-.analysis-step {
-  min-height: clamp(36px, 5.5vh, 46px);
-  font-size: 0.88rem;
-}
-
-.analysis-error {
-  padding: 8px 10px;
-}
-
-.analysis-progress::before {
-  display: none;
-}
-
-.analysis-sparkle {
-  z-index: 1;
-  grid-area: 1 / 1;
-  color: #2563eb;
-  
-  width: 30px !important;  /* قبلاً 46px بوده، الان بزرگتر شد */
-  height: 30px !important;
-
 }
 
 .analysis-footnote {
@@ -3142,329 +1482,6 @@ button {
   direction: rtl;
 }
 
-.note-modal-label {
-  color: #626b78;
-}
-
-.note-modal-input::placeholder,
-.note-modal-textarea::placeholder {
-  color: #8a929e;
-  opacity: 1;
-}
-
-.note-delete-link {
-  align-self: center;
-  justify-content: center;
-}
-
-.note-delete-warning {
-  border: 1px solid #f6e8c6;
-  background: #fff5dc;
-}
-
-.note-delete-description {
-  color: #707987;
-}
-
-.analysis-progress {
-  background: conic-gradient(
-    #2563eb var(--analysis-progress),
-    #dbeafe var(--analysis-progress)
-  );
-    width: 150px !important;  
-  height: 150px !important;
-
-  transition: background 450ms ease;
-}
-
-.analysis-progress::before {
-  display: block;
-  width: 86%;              /* ضخامت نوار آبی */
-  background: #f5f7f8;        /* حلقه سفید */
-  z-index: 0;
-}
-
-.analysis-progress::after {
-  content: "";
-  grid-area: 1 / 1;
-  width: 60%;              /* اندازه دایره کرم دور ستاره */
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #e5efff;
-  z-index: 0;
-}
-
-.analysis-sparkle {
-  width: 52px;
-  height: 52px;
-}
-
-.document-details-shell {
-  align-items: flex-start;
-  background: #f7f2f4;
-}
-
-/* حذف کادر سفید دور صفحه اطلاعات اسناد */
-.document-details-page {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-  width: 100%;
-  max-width: 100%;
-}
-
-.document-details-title {
-  margin: 0;
-  color: #1e3a8a;
-  font-size: 1.25rem;
-}
-
-.document-details-description {
-  margin: 0;
-  color: #798290;
-  font-size: 0.88rem;
-  line-height: 1.8;
-}
-
-.document-details-home {
-  margin-top: 4px;
-}
-
-@media (max-width: 600px) {
-  .upload-card {
-    gap: 16px;
-  }
-
-  .analysis-shell {
-    gap: 2px;
-    padding: 4px 0 max(4px, env(safe-area-inset-bottom, 0px));
-  }
-
-  .analysis-card {
-    gap: clamp(5px, 1vh, 9px);
-    padding-block: 4px;
-  }
-
-  .analysis-progress {
-    width: clamp(100px, 17dvh, 132px);
-  }
-
-  .analysis-steps {
-    padding: 3px 10px;
-  }
-
-  .analysis-step {
-    min-height: clamp(34px, 5dvh, 40px);
-    font-size: 0.82rem;
-  }
-
-  .analysis-footnote {
-    margin: 0;
-    padding: 3px 4px;
-    font-size: 0.68rem;
-  }
-
-  .document-details-page {
-    padding: 20px 16px;
-  }
-}
-
-/* =========================
-   صفحه حساب من (AccountScreen)
-   ========================= */
-.account-page {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 16px;
-  background-color: #f5f5f5;
-  min-height: 100vh;
-  direction: rtl;
-  font-family: inherit;
-}
-
-.account-header {
-  text-align: right;
-  margin-bottom: 4px;
-}
-
-.account-title {
-  font-size: 1rem; /* سایز فونت بزرگتر شد */
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-}
-
-.account-subtitle {
-  font-size: 0.6rem; 
-  color: #666;
-  margin: 6px 0 0;
-}
-
-/* کارت پروفایل با بک‌گراند آبی کمرنگ */
-.account-profile-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #e8f0fe; /* بک‌گراند آبی کمرنگ */
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid #d2e3fc; /* حاشیه آبی ملایم */
-  gap: 8px;
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;  /* ← محتوا را کاملاً به سمت راست (چون صفحه RTL است) می‌برد */
-  text-align: left;      /* ← متن‌ها راست‌چین می‌شوند */
-  width: 100%;            /* ← باعث می‌شود فضای کافی برای چسبیدن به راست داشته باشد */
-}
-
-.profile-info h3 {
-  font-size: 0.8rem; /* بزرگتر شدن فونت نام */
-  font-weight: 700;
-  margin: 0;
-  color: #111;
-  justify-self: start;
-}
-
-.profile-mobile {
-  font-size: 0.6rem;
-  color: #555;
-  margin: 0;
-}
-
-.profile-national-id {
-  font-size: 0.6rem;
-  color: #777;
-  margin: 0;
-}
-
-/* فلش بزرگ سمت چپ کارت پروفایل */
-.profile-arrow {
-  color: #333;
-}
-
-.profile-arrow svg {
-  width: 15px;
-  height: 15px;
-}
-
-/* بخش‌ها */
-.account-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.section-title {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #444;
-  margin: 0 4px;
-}
-
-.account-list {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.account-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 10px 12px;
-  background: none;
-  border: none;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333;
-  font-family: inherit;
-  cursor: pointer;
-  text-align: right;
-}
-
-.account-item:last-child {
-  border-bottom: none;
-}
-
-.account-item:hover {
-  background-color: #f9f9f9;
-}
-
-/* سمت راست آیتم‌ها (آیکون + متن) */
-.item-right-side {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.item-right-side span {
-  font-size: 0.7rem; /* بزرگتر شدن فونت آیتم‌ها */
-  font-weight: 500;
-}
-
-/* کادر آیکون‌ها با بک‌گراند کمرنگ */
-.item-icon-box {
-  width: 20px;
-  height: 20px;
-  border-radius: 8px;
-  background-color: #e8f0fe; /* بک‌گراند آبی کمرنگ */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1e88e5; /* رنگ آبی آیکون */
-}
-
-.item-icon-box svg {
-  width: 15px;
-  height: 15px;
-}
-
-/* فلش‌های بزرگ سمت چپ */
-.item-arrow {
-  width: 18px;
-  height: 18px;
-  color: #aaa;
-  transition: color 0.2s;
-}
-
-.account-item:hover .item-arrow {
-  color: #555;
-}
-
-/* استایل‌های مربوط به خروج از حساب (قرمز) */
-.text-danger span {
-  color: #e53935;
-}
-.item-icon-box.danger-icon {
-  background-color: #ffebee;
-  color: #e53935;
-}
-.text-danger.item-arrow {
-  color: #e53935;
-}
-.profile-avatar {
-  width: 48px;
-  height: 48px;
-  background-color: #1e88e5;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  
-}
-
-.profile-avatar svg {
-  width: 24px;
-  height: 24px;
-}
-
 .analysis-redirect-loader {
   display: flex;
   flex-direction: column;
@@ -3483,32 +1500,10 @@ button {
 .loader-dots span:nth-child(2) { animation-delay: -0.16s; }
 @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-/* استایل هدر وسط‌چین */
-.story-header-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
+/* =========================================================
+   17. صفحه داستان حقوقی (DocumentDetails)
+   ========================================================= */
 
-.story-title-center {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #1e88e5;
-  margin: 0;
-}
-
-.story-status-badge-center {
-  background-color: #e0f2f1;
-  color: #00796b;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 8px;
-}
-
-/* استایل‌های کارت‌ها (اگر قبلاً نبود) */
 .legal-story-page {
   background-color: #f5f5f0;
   min-height: 100vh;
@@ -3525,6 +1520,30 @@ button {
   gap: 20px;
 }
 
+.story-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.story-title-center {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0d47a1 !important;
+  margin: 0;
+}
+
+.story-status-badge-center {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
 .story-card {
   background-color: #ffffff;
   border-radius: 12px;
@@ -3536,13 +1555,13 @@ button {
 .summary-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .story-card-title {
   font-size: 1rem;
-  font-weight: 700;
-  color: #1e88e5;
+  font-weight: 800;
+  color: #0d47a1 !important;
   margin: 0;
 }
 
@@ -3552,6 +1571,7 @@ button {
   line-height: 1.8;
   text-align: justify;
   margin: 0;
+  margin-top: -4px;
   white-space: pre-wrap;
 }
 
@@ -3629,4 +1649,500 @@ button {
   padding: 8px 12px;
   border-radius: 8px;
   font-weight: 500;
+}
+
+/* =========================================================
+   18. صفحه حساب من (AccountScreen)
+   ========================================================= */
+
+.account-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  direction: rtl;
+  font-family: inherit;
+}
+
+.account-header {
+  text-align: right;
+  margin-bottom: 4px;
+}
+
+.account-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.account-subtitle {
+  font-size: 0.6rem;
+  color: #666;
+  margin: 6px 0 0;
+}
+
+.account-profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e8f0fe;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #d2e3fc;
+  gap: 8px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+}
+
+.profile-info h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111;
+}
+
+.profile-mobile {
+  font-size: 0.6rem;
+  color: #555;
+  margin: 0;
+}
+
+.profile-national-id {
+  font-size: 0.6rem;
+  color: #777;
+  margin: 0;
+}
+
+.profile-arrow {
+  color: #333;
+}
+
+.profile-arrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.account-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.account-list {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: right;
+}
+
+.account-item:last-child {
+  border-bottom: none;
+}
+
+.account-item:hover {
+  background-color: #f9f9f9;
+}
+
+.item-right-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-right-side span {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.item-icon-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  background-color: #e8f0fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e88e5;
+}
+
+.item-icon-box svg {
+  width: 15px;
+  height: 15px;
+}
+
+.item-arrow {
+  width: 18px;
+  height: 18px;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.account-item:hover .item-arrow {
+  color: #555;
+}
+
+.text-danger span {
+  color: #e53935;
+}
+.item-icon-box.danger-icon {
+  background-color: #ffebee;
+  color: #e53935;
+}
+.text-danger.item-arrow {
+  color: #e53935;
+}
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  background-color: #1e88e5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.profile-avatar svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* =========================================================
+   19. مدیا کوئری‌های استاندارد
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .app-frame {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .auth-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 20px !important;
+    margin-right: 10px !important;
+    padding-top: -50px !important;
+    
+  }
+
+  .auth-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-top: -150px !important;
+    border-radius: 14px !important;
+    margin-top: 0px !important;
+    box-sizing: border-box;
+  }
+
+  .dashboard-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .auth-card,
+  .dashboard-card,
+  .upload-card,
+  .analysis-card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .app-header {
+    min-height: 56px;
+    padding: 6px 0;
+  }
+
+  .brand {
+    font-size: 0.95rem;
+  }
+
+  .judiciary-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    margin-right: 10px;
+  }
+
+  .judiciary-mark svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .back-button,
+  .header-spacer {
+    width: 32px;
+    height: 32px;
+  }
+
+  .back-button {
+    font-size: 24px;
+  }
+
+  .auth-title {
+    font-size: 1.25rem;
+  }
+
+  .auth-page-title {
+    font-size: 1.4rem;
+  }
+
+  .auth-description {
+    font-size: 0.9rem;
+  }
+
+  .auth-button {
+    min-height: 48px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+
+  .dashboard-hello {
+    font-size: 1rem;
+  }
+
+  .dashboard-date {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-upload-panel {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .dashboard-upload-title {
+    font-size: 1rem;
+  }
+
+  .dashboard-upload-description {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-upload-button {
+    min-height: 46px;
+    padding: 9px 12px;
+    font-size: 0.85rem;
+  }
+
+  .dashboard-quick-actions {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .dashboard-action-card {
+    min-height: 88px;
+    padding: 10px 6px;
+    gap: 8px;
+  }
+
+  .dashboard-action-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .dashboard-action-label {
+    font-size: 0.75rem;
+  }
+
+  .dashboard-section-title {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-section-link {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-attention-panel {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .dashboard-deadline-title,
+  .dashboard-notice-text,
+  .dashboard-note-title {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-deadline-days {
+    font-size: 0.7rem;
+  }
+
+  .dashboard-notice-box,
+  .dashboard-note-box {
+    padding: 10px;
+  }
+
+  .dashboard-note-time,
+  .dashboard-note-badge,
+  .dashboard-note-body {
+    font-size: 0.75rem;
+  }
+
+  .bottom-nav {
+    padding: 6px 0 max(6px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .bottom-nav-item {
+    min-height: 52px;
+    padding: 6px 2px;
+  }
+
+  .bottom-nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bottom-nav-item .bottom-nav-label {
+    font-size: 0.72rem;
+  }
+
+  .upload-card {
+    gap: 16px;
+  }
+
+  .upload-page-title {
+    font-size: 1.1rem;
+  }
+
+  .upload-dropzone {
+    min-height: 150px;
+    padding: 24px 12px;
+  }
+
+  .upload-dropzone-text,
+  .upload-files-title {
+    font-size: 0.85rem;
+  }
+
+  .upload-dropzone-hint,
+  .upload-file-name,
+  .upload-file-status,
+  .upload-file-ocr-title,
+  .upload-file-ocr-text {
+    font-size: 0.75rem;
+  }
+
+  .upload-file-row {
+    min-width: 0;
+  }
+
+  .upload-file-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .upload-file-item {
+    padding: 10px;
+  }
+
+  .upload-file-icon-box {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .analysis-card {
+    gap: 14px;
+  }
+
+  .analysis-progress {
+    width: clamp(140px, 40vw, 170px);
+    height: clamp(140px, 40vw, 170px) !important;
+  }
+
+  .analysis-step {
+    min-height: 52px;
+    font-size: 0.88rem;
+  }
+
+  .note-modal-backdrop {
+    align-items: flex-end;
+    padding: 12px max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+  }
+
+  .note-modal {
+    max-width: none;
+    max-height: 90vh;
+    margin-bottom: 300px;
+    border-radius: 18px 18px 12px 12px;
+  }
+
+  .note-modal-hint,
+  .note-modal-label,
+  .note-modal-save,
+  .note-modal-cancel {
+    font-size: 0.85rem;
+    
+  }
+
+  .security-footer {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .auth-card {
+    padding: 12px;
+  }
+
+  .auth-title {
+    font-size: 1.1rem;
+  }
+
+  .auth-description {
+    font-size: 0.8rem;
+  }
+
+  .auth-button {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-hello {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-date {
+    font-size: 0.7rem;
+  }
+
+  .upload-file-name {
+    font-size: 0.75rem;
+  }
+
+  .upload-file-size {
+    font-size: 0.65rem;
+  }
 }

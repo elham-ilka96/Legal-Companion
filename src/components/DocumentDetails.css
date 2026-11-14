@@ -157,3 +157,439 @@
   border-radius: 8px;
   font-weight: 500;
 }
+
+/* =========================================
+   استایل‌های صفحه جزئیات پرونده
+   ========================================= */
+
+/* هدر سرمه‌ای بالای صفحه */
+.case-detail-header {
+  background-color: #1e3a8a; /* سرمه‌ای */
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.case-detail-title {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* کارت سفید مشخصات */
+.case-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.case-detail-section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e3a8a; /* سرمه‌ای */
+  margin: 0 0 8px;
+}
+
+/* ردیف‌های مشخصات */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 0.8rem;
+  color: #9ca3af; /* خاکستری کمرنگ */
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.detail-value.dark {
+  color: #1a1a1a;
+}
+
+.detail-value.blue {
+  color: #1e88e5; /* آبی */
+}
+
+/* مراحل پرونده */
+.case-steps-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 16px 0 8px;
+  padding-right: 4px;
+}
+
+.case-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* چیدن از ابتدای محور (در RTL: از راست) */
+  gap: 12px;
+  border: none;
+  padding: 0;
+}
+
+.case-step-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  text-align: left;   /* متن سمت چپ */
+  margin-left: -200px;
+}
+
+.case-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1e88e5;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   استایل‌های صفحه جزئیات پرونده (نسخه جدید)
+   ========================================= */
+
+/* هدر بالای صفحه (بدون پس‌زمینه) */
+.case-detail-title-plain {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+/* دیو مشخصات پرونده */
+.case-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.case-detail-section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0 0 8px;
+}
+
+/* ردیف‌های مشخصات (بدون خط) */
+.detail-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.detail-value.dark {
+  color: #1a1a1a;
+}
+
+.detail-value.blue {
+  color: #1e88e5;
+}
+
+/* ردیف وضعیت (در جریان سمت چپ) */
+.detail-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  padding-top: 12px;
+}
+
+.case-status-badge {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* =========================================
+   بخش مراحل پرونده
+   ========================================= */
+.case-steps-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 16px 0 8px;
+  padding-right: 4px;
+}
+
+.case-steps-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.case-step-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.case-step-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  text-align: left;
+}
+
+.case-step-text {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.case-step-date {
+  font-size: 0.72rem;
+  color: #b0b7c3;
+  font-weight: 400;
+}
+
+.case-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1e88e5;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* =========================================
+   بخش اسناد پرونده
+   ========================================= */
+.case-document-card {
+  padding: 16px;
+  margin-bottom: 12px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.document-icon-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
+.document-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.document-title {
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.document-date {
+  font-size: 0.72rem;
+  color: #b0b7c3;
+  font-weight: 400;
+}
+
+.document-badge-green {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+/* =========================================
+   اصلاحات مشخصات پرونده و مراحل
+   ========================================= */
+
+/* ردیف شماره پرونده (برچسب راست، مقدار چپ) */
+.detail-block[style*="row-reverse"] {
+  display: flex;
+  align-items: center;
+}
+
+/* =========================================
+   مراحل پرونده (بدون خط، دایره دو طرف)
+   ========================================= */
+.case-steps-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;             /* فاصله بین آیتم‌ها (بدون خط) */
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.case-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: none;          /* حذف خط جداکننده */
+  border-bottom: none;   /* حذف خط پایین */
+  padding: 0;
+}
+
+.case-step-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  text-align: center;    /* متن وسط‌چین */
+}
+
+.case-step-text {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.case-step-date {
+  font-size: 0.72rem;
+  color: #b0b7c3;
+  font-weight: 400;
+}
+
+.case-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1e88e5;
+  flex-shrink: 0;
+}
+
+/* حذف هرگونه خط border از آیتم‌های قبلی */
+.case-step-item + .case-step-item {
+  border-top: none;
+}
+/* =========================================
+   اصلاح چیدمان پرونده‌های مرتبط
+   ========================================= */
+.case-item-card {
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.case-item-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.case-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.case-item-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.case-number {
+  font-size: 0.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.case-number span {
+  color: #1e88e5;
+  font-weight: 600;
+}
+
+.case-branch {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0;
+}
+
+.upload-file-check {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dff5ed;
+  color: #24a77a;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* دکمه فعال (سمت راست) */
+.case-status-badge {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.case-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  flex: 1;
+}

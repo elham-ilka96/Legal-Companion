@@ -1,0 +1,259 @@
+/* =========================================
+   صفحه ابلاغیه‌ها
+   ========================================= */
+.notices-page {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* هدر */
+.notices-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.notices-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1a1a1a; /* مشکی */
+  margin: 0;
+}
+
+/* دکمه مربعی ضربدر */
+.close-square-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px; /* گوشه‌های کمی گرد */
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280; /* طوسی */
+  transition: all 0.2s ease;
+}
+
+.close-square-btn:hover {
+  background-color: #f3f4f6;
+  color: #1a1a1a;
+}
+
+/* لیست ابلاغیه‌ها */
+.notices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* کارت ابلاغیه */
+.notice-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f0f6ff; /* آبی خیلی کم‌رنگ */
+  border: 1.5px solid #b8cce4; /* ⬅️ کادر آبی-توسی (جدا شدن از پس‌زمینه) */
+  border-radius: 12px;
+  padding: 16px;
+  gap: 12px;
+}
+
+/* باکس جلسه (طوسی-صورتی) */
+.notice-hearing-box {
+  background-color: #e9e5e5; /* طوسی-صورتی ملایم */
+  color: #bb4e3d;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-align: center;
+  white-space: nowrap; /* جلوگیری از شکستن متن */
+  margin-right: 50px;
+  margin-top: 20px;
+}
+
+/* بخش اطلاعات (راست) */
+.notice-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1; /* فضای باقی‌مانده رو پر کنه */
+}
+
+.notice-doc-title {
+  font-size: 0.85rem; /* کوچک‌تر از تیتر اصلی */
+  font-weight: 700;
+  color: #1a1a1a; /* مشکی */
+  margin: 0;
+}
+
+.notice-story-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2563eb; /* آبی */
+  margin: 0;
+}
+
+.notice-datetime {
+  font-size: 0.7rem;
+  color: #6b7280; /* طوسی */
+  margin: 0;
+}
+
+/* بخش وضعیت (چپ) */
+.notice-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* فاصله بین دایره و باکس جلسه */
+  min-width: 100px; /* جلوگیری از به‌هم‌ریختگی */
+}
+
+/* دایره آبی */
+.notice-active-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #2563eb; /* آبی */
+  border-radius: 50%;
+  margin-right: 110px;
+  
+}
+
+/* متن مهلت اعتراض پایان یافته (وقتی is_active: false است) */
+.notice-expired-text {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #717275; /* رنگ طوسی */
+  text-align: center;
+  white-space: nowrap;
+  padding-top: 0px;
+  border-radius: 8px;
+  background-color: #d9dce2;
+  height: 30px;
+  width: 130px;
+  padding-top: 5px;
+  margin-top: 45px;
+}
+
+/* ظرف آیکون برای قرارگیری نقطه قرمز */
+.nav-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* نقطه قرمز (Badge) */
+.nav-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background-color: #ef4444; /* قرمز */
+  border-radius: 50%;
+  border: 2px solid #ffffff; /* حاشیه سفید برای جدا شدن از آیکون */
+  animation: pulse-red 2s infinite;
+}
+
+/* انیمیشن ضربان برای جلب توجه */
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.notices-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5eaf0;
+  background-color: #ffffff;
+  color: #6b7280;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background-color: #f0f6ff;
+  color: #2563eb;
+  border-color: #b8cce4;
+}
+
+/* =========================================
+   ریسپانسیو برای موبایل (تا 480 پیکسل) - اصلاح شده
+   ========================================= */
+@media (max-width: 480px) {
+  .notices-title {
+    font-size: 1rem;
+  }
+
+  /* کارت ردیفی می‌مونه، اما ترازش از پایین انجام میشه */
+  .notice-card {
+    flex-direction: row; 
+    align-items: flex-end; /* این خط باعث میشه تاریخ و کادر جلسه در یک خط بیفتن */
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .notice-info {
+    flex: 1;
+    min-width: 0; /* جلوگیری از سرریز متن */
+  }
+
+  /* ستون وضعیت */
+  .notice-status {
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: auto;
+    position: relative; /* برای قرار دادن دایره به صورت آزاد */
+    padding-top: 12px; /* ایجاد فضا در بالا برای دایره */
+    margin-top: 0;
+  }
+
+  /* دایره آبی: بالاترین نقطه در ستون وضعیت */
+  .notice-active-dot {
+    position: absolute;
+    margin-top: -30px !important;
+    margin-right: 50px;
+    width: 8px;
+    height: 8px;
+  }
+
+  /* کادر جلسه: حذف حاشیه‌های سنگین و قرار گرفتن در خط پایین */
+  .notice-hearing-box {
+    margin-right: 0;
+    margin-top: 0;
+    white-space: nowrap; /* جلوگیری از شکستن متن */
+  }
+
+  /* متن مهلت اعتراض */
+  .notice-expired-text {
+    width: auto;
+    margin-top: 0;
+    height: auto;
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+
+  /* دایره قرمز زنگوله */
+  .nav-badge {
+    right: auto;
+    left: -4px;
+  }
+}

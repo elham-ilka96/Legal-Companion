@@ -1,0 +1,422 @@
+.confirm-page {
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+  min-height: 100vh;
+  direction: rtl;
+  font-family: inherit;
+}
+
+.confirm-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirm-title {
+  color: #1e3a8a; /* آبی پررنگ */
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 8px 0;
+}
+
+.confirm-info-box {
+  background-color: #eaf2ff; /* آبی کم‌رنگ */
+  border-radius: 12px;
+  padding: 16px;
+  text-align: right;
+}
+
+.confirm-info-box h3 {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: #1715a3;
+}
+
+.confirm-info-box p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280; /* طوسی */
+  line-height: 1.6;
+}
+
+.confirm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirm-card {
+  background-color: #ffffff;
+  border: 1px solid #e5eaf0;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirm-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.success-circle {
+  width: 20px;
+  height: 20px;
+  background-color: #e0f2fe; /* آبی روشن */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.doc-icon-square {
+  width: 32px;
+  height: 32px;
+  background-color: #2563eb; /* آبی پررنگ */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e5eaf0;
+  margin: 0;
+}
+
+.confirm-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.change-btn {
+  background-color: #2563eb; /* آبی */
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.edit-label {
+  font-size: 0.75rem;
+  color: #9ca3af; /* طوسی کم‌رنگ */
+  font-weight: 500;
+}
+
+.edit-value {
+  margin: 0;
+  width: 100%; /* میره خط بعد */
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  padding-right: 4px;
+}
+
+.confirm-footer-box {
+  background-color: #f8f4f5; /* طوسی-صورتی خیلی کم‌رنگ */
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.confirm-actions {
+  display: flex;
+  flex-direction: column; /* ⬅️ دکمه‌ها زیر هم قرار بگیرن */
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.confirm-btn {
+  width: 100%; /* ⬅️ به اندازه کل دیو صفحه */
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirm-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* دکمه بازگشت (لینک متنی مشکی) */
+.back-link-btn {
+  background: none;
+  border: none;
+  color: #1a1a1a; /* ⬅️ مشکی */
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.back-link-btn:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+.cancel-btn {
+  flex: 1;
+  background-color: #f3f4f6;
+  color: #333;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* استایل مودال ویرایش */
+.edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.edit-modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-modal h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5eaf0;
+  border-radius: 8px;
+  font-family: inherit;
+  outline: none;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 10px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.close-btn {
+  flex: 1;
+  padding: 10px;
+  background: #f3f4f6;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* =========================================
+   استایل مدرن و نرم برای مودال ویرایش
+   ========================================= */
+.edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4); /* رنگ تیره با شفافیت نرم */
+  backdrop-filter: blur(4px); /* افکت بلور برای پس‌زمینه */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.edit-modal {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.edit-modal h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  color: #1e3a8a; /* آبی پررنگ */
+  font-weight: 800;
+  text-align: right;
+}
+
+.edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4b5563; /* طوسی تیره */
+}
+
+.edit-input,
+.edit-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e5eaf0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  background-color: #f8fafc; /* پس‌زمینه خیلی کم‌رنگ */
+  outline: none;
+  transition: all 0.2s ease;
+  text-align: right;
+}
+
+.edit-input:focus,
+.edit-textarea:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.7;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.save-btn {
+  flex: 1;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #1d4ed8;
+}
+
+.close-btn {
+  flex: 1;
+  padding: 12px;
+  background: #f3f4f6;
+  color: #4b5563;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-btn:hover {
+  background: #e5e7eb;
+}
+/* =========================================
+   استایل دیوهای داخل مودال
+   ========================================= */
+.modal-section-box {
+  background-color: #f8fafc; /* پس‌زمینه خیلی کم‌رنگ برای تفکیک بخش‌ها */
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-section-title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e3a8a; /* آبی */
+}
+
+/* تنظیم استایل اینپوت و تکست‌اریا داخل این باکس‌ها */
+.modal-section-box .edit-input,
+.modal-section-box .edit-textarea {
+  background-color: #ffffff; /* داخل باکس، سفید باشه */
+}
+.edit-subvalue {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+  width: 100%;
+  text-align: right;
+}

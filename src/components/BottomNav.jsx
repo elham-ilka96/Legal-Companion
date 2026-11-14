@@ -56,7 +56,8 @@ function NavIcon({ name, className = "" }) {
   return null;
 }
 
-export default function BottomNav({ active = "home", onChange = () => {} }) {
+// ⬅️ پراپ جدید activeNoticesCount (عدد) جایگزین hasNotifications (بولین) شد
+export default function BottomNav({ active = "home", onChange = () => {}, activeNoticesCount = 0 }) {
   const items = [
     { key: "home", label: "خانه" },
     { key: "cases", label: "پرونده‌ها" },
@@ -68,6 +69,9 @@ export default function BottomNav({ active = "home", onChange = () => {} }) {
     <nav className="bottom-nav" aria-label="ناوبری پایین">
       {items.map((item) => {
         const isActive = active === item.key;
+        // اگر ابلاغیه بود و تعدادش بیشتر از صفر بود، نشانگر رو نشون بده
+        const showBadge = item.key === "notices" && activeNoticesCount > 0;
+        
         return (
           <button
             key={item.key}
@@ -76,7 +80,10 @@ export default function BottomNav({ active = "home", onChange = () => {} }) {
             onClick={() => onChange(item.key)}
             aria-current={isActive ? "page" : undefined}
           >
-            <NavIcon name={item.key} className="bottom-nav-icon" />
+            <div className="nav-icon-wrapper">
+              <NavIcon name={item.key} className="bottom-nav-icon" />
+              {showBadge && <span className="nav-badge">{activeNoticesCount}</span>}
+            </div>
             <span className="bottom-nav-label">{item.label}</span>
           </button>
         );
