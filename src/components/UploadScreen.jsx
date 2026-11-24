@@ -10,6 +10,7 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
   const [allDone, setAllDone] = useState(false);
   const [hasFailure, setHasFailure] = useState(false);
   const [newStoryId, setNewStoryId] = useState(null);
+  const [duplicateError, setDuplicateError] = useState("");
 
   const handleDocumentsSelect = (event) => {
     const files = Array.from(event.target.files || []);
@@ -21,7 +22,7 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
       if (file.size === 0 || file.size > 10 * 1024 * 1024) return;
       validFiles.push({
         id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
-        file, status: "ready", taskId: null, ocrText: "", extractedData: null, error: "", fileHash: "", paperlessId: null, // ⬅️ paperlessId اینجا اضافه شد
+        file, status: "ready", taskId: null, ocrText: "", extractedData: null, error: "", fileHash: "", paperlessId: null,
       });
     });
     setSelectedFiles((prev) => [...prev, ...validFiles]);
@@ -60,7 +61,7 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
     const maxAttempts = 400;
     const interval = 3000;
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    
+
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await new Promise((resolve) => setTimeout(resolve, interval));
       try {
@@ -78,7 +79,7 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
         const task = tasks.find((item) => String(item.task_id ?? "") === String(fileItem.taskId)) ?? tasks[0];
         if (!task) continue;
         const taskStatus = String(task.status ?? "").toLowerCase();
-        
+
         if (taskStatus === "success") {
           const docId = task.related_document_ids?.[0] ?? task.related_document;
           if (docId) {
@@ -97,13 +98,21 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
                 });
                 if (aiResponse.ok) {
                   const aiData = await aiResponse.json();
-                  // ⬇️ اینجا paperlessId رو هم ذخیره می‌کنیم تا در مرحله بعد داشته باشیمش ⬇️
                   updateFileById(fileItem.id, { status: "done", ocrText, extractedData: aiData, paperlessId: docId });
                   if (aiData.story_id) setNewStoryId(aiData.story_id);
                   return;
                 } else if (aiResponse.status === 409) {
-                  const errorData = await aiResponse.json();
-                  updateFileById(fileItem.id, { status: "error", error: errorData.message || "این پرونده قبلاً آپلود شده است." });
+                  // ⬇️ سند تکراری — پیام مشخص و قابل‌فهم
+                  const errorData = await aiResponse.json().catch(() => ({}));
+                  const msg = errorData.message || "این سند قبلاً آپلود شده است. لطفاً فایل دیگری انتخاب کنید.";
+                  setDuplicateError(msg);
+                  updateFileById(fileItem.id, { status: "error", error: msg });
+                  return;
+                } else if (aiResponse.status >= 500) {
+                  // ⬇️ خطای سرور — فقط در کنسول (برای بک‌اند)، به کاربر نشون نده
+                  const errorData = await aiResponse.json().catch(() => ({}));
+                  console.error("[upload] server error on /api/ai/analyze/:", aiResponse.status, errorData);
+                  updateFileById(fileItem.id, { status: "silent_error", error: "" });
                   return;
                 } else {
                   const errorData = await aiResponse.json().catch(() => ({}));
@@ -111,7 +120,8 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
                   return;
                 }
               } catch (aiError) {
-                updateFileById(fileItem.id, { status: "error", error: "ارتباط با هوش مصنوعی برقرار نشد." });
+                console.error("[upload] network error on /api/ai/analyze/:", aiError);
+                updateFileById(fileItem.id, { status: "error", error: "ارتباط با سرور برقرار نشد." });
                 return;
               }
             }
@@ -137,6 +147,9 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
 
     setUploadingFiles(true);
     setActiveView("analysis");
+    setDuplicateError("");
+    setHasFailure(false);
+    setAllDone(false);
 
     try {
       await Promise.all(
@@ -152,7 +165,10 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
           }
           const dup = await checkFileDuplicate(fileHash);
           if (dup.isDuplicate) {
-            updateFileById(item.id, { status: "error", error: dup.message });
+            // ⬇️ سند تکراری — پیام مشخص
+            const msg = dup.message || "این سند قبلاً آپلود شده است. لطفاً فایل دیگری انتخاب کنید.";
+            setDuplicateError(msg);
+            updateFileById(item.id, { status: "error", error: msg });
             return;
           }
           const formData = new FormData();
@@ -164,7 +180,13 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok) {
-              updateFileById(item.id, { status: "error", error: data.message || "آپلود انجام نشد." });
+              if (response.status >= 500) {
+                // ⬇️ خطای سرور — فقط کنسول
+                console.error("[upload] paperless upload error:", response.status, data);
+                updateFileById(item.id, { status: "silent_error", error: "" });
+              } else {
+                updateFileById(item.id, { status: "error", error: data.message || "آپلود انجام نشد." });
+              }
               return;
             }
             updateFileById(item.id, { status: "processing", taskId: data.task_id });
@@ -181,8 +203,8 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
 
   useEffect(() => {
     const allFilesDone = selectedFiles.length > 0 && selectedFiles.every(f => f.status === "done");
-    const anyFailure = selectedFiles.some(f => f.status === "error");
-    
+    const anyFailure = selectedFiles.some(f => f.status === "error" || f.status === "silent_error");
+
     if (allFilesDone) {
       setAllDone(true);
       const timer = setTimeout(() => {
@@ -195,11 +217,11 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
             case_number: f.extractedData?.case_number || "نامشخص",
             court: f.extractedData.court || "نامشخص",
             date: f.extractedData?.document_date || "نامشخص",
-            paperless_id: f.paperlessId, // حالا این مقدار درست پر میشه
+            paperless_id: f.paperlessId,
             story_id: f.extractedData.story_id,
             case_id: f.extractedData.case_id,
-            document_type: f.extractedData.case_type || "سند", // ⬅️ ویرگول اینجا اضافه شد
-            story_summary: f.extractedData.story_summary || "", // ⬅️ از اینجا به بعد اصلاح شد
+            document_type: f.extractedData.case_type || "سند",
+            story_summary: f.extractedData.story_summary || "",
             case_summary: f.extractedData.case_summary || ""
           }));
         onUploadSuccess(results);
@@ -216,10 +238,11 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
     const isUploading = selectedFiles.some(f => f.status === "uploading");
     const isProcessing = selectedFiles.some(f => f.status === "processing");
     const progress = allDone ? 100 : isProcessing ? 66 : isUploading ? 30 : 0;
-    
+    const anyUserError = selectedFiles.some(f => f.status === "error");
+
     const steps = [
-      { label: "شناسایی نوع اسناد", state: isUploading ? "active" : isProcessing || allDone ? "complete" : "pending" },
-      { label: "استخراج اطلاعات کلیدی", state: isProcessing ? "active" : allDone ? "complete" : "pending" },
+      { label: "شناسایی نوع اسناد", state: isUploading ? "active" : isProcessing || allDone || hasFailure ? "complete" : "pending" },
+      { label: "استخراج اطلاعات کلیدی", state: isProcessing ? "active" : allDone || hasFailure ? "complete" : "pending" },
       { label: "تطبیق با داستان حقوقی", state: allDone ? "complete" : "pending" },
     ];
 
@@ -232,7 +255,22 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
         <h2 className="analysis-status">
           {hasFailure ? "تحلیل اسناد انجام نشد" : allDone ? "تحلیل اسناد شما کامل شد" : "در حال تحلیل اسناد شما"}
         </h2>
-        <p className="analysis-description">هوش مصنوعی در حال بررسی کلمات کلیدی</p>
+
+        {/* ⬇️ جای «در حال بررسی کلمات کلیدی» — پیام قرمز تکراری اینجا نشون داده می‌شه ⬇️ */}
+        {duplicateError ? (
+          <p
+            className="analysis-description analysis-duplicate-error"
+            style={{ color: "#c62828", fontWeight: 600, marginTop: "6px" }}
+            role="alert"
+          >
+            {duplicateError}
+          </p>
+        ) : hasFailure ? (
+          <p className="analysis-description">تحلیل اسناد متوقف شد</p>
+        ) : (
+          <p className="analysis-description">هوش مصنوعی در حال بررسی کلمات کلیدی</p>
+        )}
+
         <div className="analysis-steps" aria-label="مراحل تحلیل">
           {steps.map((step) => (
             <div className={`analysis-step ${step.state}`} key={step.label}>
@@ -241,7 +279,12 @@ function UploadScreen({ authToken, toPersianDigits, onUploadSuccess }) {
             </div>
           ))}
         </div>
-        {hasFailure && <div className="analysis-error" role="alert">پردازش سند انجام نشد. برای تلاش دوباره صفحه را رفرش کنید.</div>}
+
+        {/* خطاهای عمومی (غیر تکراری و غیر silent) */}
+        {hasFailure && !duplicateError && anyUserError && (
+          <div className="analysis-error" role="alert">خطا در پردازش سند. لطفاً دوباره تلاش کنید.</div>
+        )}
+
         {allDone && (
           <div className="analysis-redirect-loader">
             <span>در حال رفتن به صفحه داستان...</span>
