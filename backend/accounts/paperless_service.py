@@ -48,12 +48,16 @@ def upload_document(file_path, title=None, tags=None):
 
     try:
         with open(file_path, "rb") as file:
+            # ★★★ اصلاح اصلی: تغییر اجباری اسم فایل به انگلیسی برای جلوگیری از خطای Paperless ★★★
+            safe_filename = "document.pdf"
+            
             response = requests.post(
                 url,
                 headers=get_headers(),
-                files={"document": file},
+                # ارسال فایل با اسم امن و مشخص کردن نوع محتوا
+                files={"document": (safe_filename, file, "application/pdf")}, 
                 data=data,
-                timeout=60,
+                timeout=120,  # افزایش زمان به ۲ دقیقه برای فایل‌های سنگین
             )
 
         if not response.ok:
@@ -107,7 +111,88 @@ def upload_document(file_path, title=None, tags=None):
             "success": False,
             "error": f"خطا در خواندن فایل: {exc}",
         }
+    def upload_document(file_path, title=None, tags=None):
+        if not PAPERLESS_TOKEN:
+          return {
+            "success": False,
+            "error": "توکن Paperless در تنظیمات Django تعریف نشده است.",
+          }
 
+        url = f"{PAPERLESS_URL}/api/documents/post_document/"
+
+        data = {}
+
+        if title:
+         data["title"] = title
+
+        if tags:
+          data["tags"] = tags
+
+    try:
+        with open(file_path, "rb") as file:
+            # ★★★ اصلاح اصلی: تغییر اجباری اسم فایل به انگلیسی برای جلوگیری از خطای Paperless ★★★
+            safe_filename = "document.pdf"
+            
+            response = requests.post(
+                url,
+                headers=get_headers(),
+                # ارسال فایل با اسم امن و مشخص کردن نوع محتوا
+                files={"document": (safe_filename, file, "application/pdf")}, 
+                data=data,
+                timeout=120,  # افزایش زمان به ۲ دقیقه برای فایل‌های سنگین
+            )
+
+        if not response.ok:
+            return {
+                "success": False,
+                "error": (
+                    f"Paperless HTTP {response.status_code}: "
+                    f"{response.text[:1000]}"
+                ),
+            }
+
+        try:
+            result = response.json()
+        except ValueError:
+            return {
+                "success": False,
+                "error": "پاسخ Paperless قابل خواندن نیست.",
+            }
+
+        # بسته به نسخه، پاسخ می‌تواند UUID یا یک شیء JSON باشد.
+        if isinstance(result, str):
+            task_id = result
+        elif isinstance(result, dict):
+            task_id = (
+                result.get("task_id")
+                or result.get("task")
+                or result.get("id")
+            )
+        else:
+            task_id = None
+
+        if not task_id:
+            return {
+                "success": False,
+                "error": f"شناسه پردازش در پاسخ پیدا نشد: {result}",
+            }
+
+        return {
+            "success": True,
+            "task_id": str(task_id),
+        }
+
+    except requests.RequestException as exc:
+        return {
+            "success": False,
+            "error": f"خطا در ارتباط با Paperless: {exc}",
+        }
+
+    except OSError as exc:
+        return {
+            "success": False,
+            "error": f"خطا در خواندن فایل: {exc}",
+        }
 
 def get_task_status(task_uuid):
     """بررسی وضعیت پردازش سند."""
